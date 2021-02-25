@@ -877,3 +877,19 @@ For a $lw$ instruction, the next step is to read the source register containing 
 
 ------
 
+​	Figure 7.56 modifies the pipelined processor to move the branch decision earlier and handle control hazards. An equality comparator is added to the Decode stage and the *PCSrc* AND gate is moved earlier, so that *PCSrc* can be determined in the Decoder stage rather than the Memory stage. The *PCBranch* adder must also be moved into the Decode stage so that the destination address can be computed in time. The synchronous clear input (*CLR*) connected to *PCSrcD* is added to the Decode stage pipeline register so that the incorrectly fetched instruction can be flushed when a branch is taken.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/pipilined%20processor%20handling%20branch%20control%20hazard.jpg" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/pipelined%20process%20handling%20data%20dependencies%20for%20branch%20instructions.jpg" style="zoom:67%;" />
+
+​	The function of the stall detection logic for a branch is given below. The processor must make a branch decision in the Decode stage. If either of the sources of the branch depends on an ALU instruction in the Execute stage or on a lw instruction in the Memory stage, the processor must stall until the sources are ready.
+
+------
+
+​	In summary, RAW data hazards occur when an instruction depends on the result of another instruction that has not yet been written into the register file. The data hazards can be resolved by forwarding if the result is computed soon enough; otherwise, they require stalling the pipeline until the result is available. Control hazards occur when the decision of what instruction to fetch has not been made by the time the next instruction must be fetched. Control hazards are solved by predicting which instruction should be fetched and flushing the pipeline if the prediction is later determined to be wrong. Moving the decision as early as possible minimizes the number of instructions that are flushed on a misprediction. You may have observed by now that one of the challenges of designing a pipelined processor is to understand all the possible interactions between instructions and to discover all the hazards that may exist. Figure 7.58 shows the complete pipelined processor handling all of the hazards.
+
+<img src="E:\PIC\pipilined processor with full hazard handling.jpg" style="zoom:67%;" />
+
+------
+
