@@ -19,7 +19,7 @@ Suppose the lowest voltage in the system is 0 V, also called ground or GND. The 
 
 #### nMOS and pMOS
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/npmos.jpg" alt="image-20201114142502687" style="zoom:67%;" />
+<img src="E:\PIC\npmos.jpg" alt="image-20201114142502687" style="zoom:67%;" />
 
 A MOSFET behaves as a voltage-controlled switch in which the gate voltage creates an electric field that turns ON or OFF a connection between the source and drain.
 
@@ -29,7 +29,7 @@ nMOS transistors are OFF when the gate is 0 and ON when the gate is 1.pMOS trans
 
 #### transmission gate (pass gate)
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/transmission gate.jpg" alt="image-20201115001331300" style="zoom:67%;" />
+<img src="E:\PIC\transmission gate.jpg" alt="image-20201115001331300" style="zoom:67%;" />
 
 The two sides of the switch are called A and B because a switch is bidirectional and has no preferred input or output side. The control signals are called enables, EN and EN  1, when EN = 0 and another = 1, both transistors are OFF. Hence, the transmission gate is OFF or disabled, so A and B are not connected. When EN = 1 and another = 0, the transmission gate is ON or enabled, and any logic value can flow between A and B.
 
@@ -78,7 +78,7 @@ Multiplexers are among the most commonly used combinational circuits. They choos
 
 Figure 2.54 shows the schematic and truth table for a 2:1 multiplexer with two data inputs, D0 and D1, a select input, S, and one output, Y. The multiplexer chooses between the two data inputs based on the select: if S = 0,  $Y=D_0$, and if S = 1, $Y = D_1$. S is also called a control signal because it controls what the multiplexer does.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/multiplexer.jpg" alt="image-20201213175918402" style="zoom:67%;" />
+<img src="E:\PIC\multiplexer.jpg" alt="image-20201213175918402" style="zoom:67%;" />
 
 ------
 
@@ -86,7 +86,7 @@ Figure 2.54 shows the schematic and truth table for a 2:1 multiplexer with two d
 
 A decoder has N inputs and 2N outputs. It asserts exactly one of its outputs depending on the input combination.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/decoder.jpg" alt="image-20201122175036337" style="zoom:67%;" />
+<img src="E:\PIC\decoder.jpg" alt="image-20201122175036337" style="zoom:67%;" />
 
 ------
 
@@ -98,7 +98,7 @@ We measure delay from the 50% point of the input signal, A, to the 50% point of 
 
 Combinational logic is characterized by its ***propagation delay*** and ***contamination delay***. The propagation delay, tpd, is the maximum time from when an input changes until the output or outputs reach their final value. The contamination delay, tcd, is the minimum time from when an input changes until any output starts to change its value.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/delay.jpg" alt="image-20201122182314106" style="zoom: 67%;" />
+<img src="E:\PIC\delay.jpg" alt="image-20201122182314106" style="zoom: 67%;" />
 
 #### Glitch
 
@@ -110,19 +110,19 @@ In general, a glitch can occur when a change in a single variable crosses the bo
 
 Like the cross-coupled inverters, the SR latch is a bistable element with one bit of state stored in Q. However, the state can be controlled through the S and R inputs. When R is asserted, the state is reset to 0. When S is asserted, the state is set to 1. When neither is asserted, the state retains its old value. 
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/SR Latch.jpg" alt="image-20201130180035119" style="zoom: 67%;" />
+<img src="E:\PIC\SR Latch.jpg" alt="image-20201130180035119" style="zoom: 67%;" />
 
 #### D Latch
 
 The D latch in Figure 3.7(a) solves these problems. It has two inputs. The data input, D, controls what the next state should be. The clock input, CLK, controls when the state should change.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/D Latch.jpg" alt="image-20201130180133190" style="zoom: 67%;" />
+<img src="E:\PIC\D Latch.jpg" alt="image-20201130180133190" style="zoom: 67%;" />
 
 #### D Flip-Flop
 
 A D flip-flop can be built from two back-to-back D latches controlled by complementary clocks, as shown in Figure 3.8(a). The first latch, L1, is called the master. The second latch, L2, is called the slave. The node between them is named N1. A symbol for the D flip-flop is given in Figure 3.8(b). When the output is not needed, the symbol is often condensed as in Figure 3.8(c). When CLK  0, the master latch is transparent and the slave is opaque. Therefore, whatever value was at D propagates through to N1. When CLK  1, the master goes opaque and the slave becomes transparent. The value at N1 propagates through to Q, but N1 is cut off from D. Hence, whatever value was at D immediately before the clock rises from 0 to 1 gets copied to Q immediately after the clock rises. At all other times, Q retains its old value, because there is always an opaque latch blocking the path between D and Q
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/DFlip-flop.jpg" alt="image-20201130180214581" style="zoom: 67%;" />
+<img src="E:\PIC\DFlip-flop.jpg" alt="image-20201130180214581" style="zoom: 67%;" />
 
 ------
 
@@ -130,7 +130,7 @@ A D flip-flop can be built from two back-to-back D latches controlled by complem
 
 An N-bit register is a bank of N flip-flops that share a common CLK input, so that all bits of the register are updated at the same time.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/register.jpg" alt="image-20201209184417515" style="zoom:67%;" />
+<img src="E:\PIC\register.jpg" alt="image-20201209184417515" style="zoom:67%;" />
 
 ------
 
@@ -139,13 +139,13 @@ An N-bit register is a bank of N flip-flops that share a common CLK input, so th
 An enabled flip-flop adds another input called EN or ENABLE to determine whether data is loaded on the clock edge. When EN is
 TRUE, the enabled flip-flop behaves like an ordinary D flip-flop. When EN is FALSE, the enabled flip-flop ignores the clock and retains its state. Enabled flip-flops are useful when we wish to load a new value into a flip-flop only some of the time, rather than on every clock edge.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/CLK.jpg" alt="image-20201130180248220" style="zoom:50%;" />
+<img src="E:\PIC\CLK.jpg" alt="image-20201130180248220" style="zoom:50%;" />
 
 #### Resettable Flip-Flop
 
 A resettable flip-flop adds another input called RESET. When RESET is FALSE, the resettable flip-flop behaves like an ordinary D flip-flop. When RESET is TRUE, the resettable flip-flop ignores D and resets the output to 0. Resettable flip-flops are useful when we want to force a known state (i.e., 0) into all the flip-flops in a system when we first turn it on.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/resettable.jpg" alt="image-20201130180332971" style="zoom:50%;" />
+<img src="E:\PIC\resettable.jpg" alt="image-20201130180332971" style="zoom:50%;" />
 
 ------
 
@@ -514,7 +514,7 @@ endmodule
 
 A full adder, introduced in Section 2.1, accepts the carry in, Cin, as shown in Figure 5.3. The figure also shows the output equations for S and Cout.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/fulladder.jpg" style="zoom:67%;" >
+<img src="E:\PIC\fulladder.jpg" style="zoom:67%;" >
 
 #### Carry-lookahead adder
 
@@ -538,7 +538,7 @@ endmodule
 
 Recall from Section 1.4.6 that adders can add positive and negative numbers using two’s complement number representation. Subtraction is almost as easy: flip the sign of the second number, then add. Flipping the sign of a two’s complement number is done by inverting the bits and adding 1.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/Subtractor.jpg" style="zoom:67%;" >
+<img src="E:\PIC\Subtractor.jpg" style="zoom:67%;" >
 
 ```verilog
 //Subtractor
@@ -555,11 +555,11 @@ An equality comparator produces a single output indicating whether A is equal to
 
 The equality comparator is the simpler piece of hardware. Figure shows the symbol and implementation of a 4-bit equality comparator. It first checks to determine whether the corresponding bits in each column of A and B are equal, using XNOR gates. The numbers are equal if all of the columns are equal.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/comparator.jpg" style="zoom:67%;" >
+<img src="E:\PIC\comparator.jpg" style="zoom:67%;" >
 
 Magnitude comparison is usually done by computing A - B and looking at the sign (most significant bit) of the result, as shown in Figure. If the result is negative (the sign bit is 1), then A is less than B. Otherwise A is greater than or equal to B.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/magnitude.jpg" style="zoom:67%;" >
+<img src="E:\PIC\magnitude.jpg" style="zoom:67%;" >
 
 ```verilog
 //comparators
@@ -583,11 +583,11 @@ endmodule
 
 An Arithmetic/Logical Unit (ALU) combines a variety of mathematical and logical operations into a single unit. For example, a typical ALU might perform addition, subtraction, magnitude comparison, AND, and OR operations. The ALU forms the heart of most computer systems.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/ALU.jpg" style = "zoom:67%;">
+<img src="E:\PIC\ALU.jpg" style = "zoom:67%;">
 
 Figure shows an implementation of the ALU. The ALU contains an N-bit adder and N two-input AND and OR gates. It also contains an inverter and a multiplexer to optionally invert input B when the F2 control signal is asserted. A 4:1 multiplexer chooses the desired function based on the F1:0 control signals.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/ALU2.jpg" style ="zoom:67%;">
+<img src="E:\PIC\ALU2.jpg" style ="zoom:67%;">
 
 ------
 
@@ -595,13 +595,13 @@ Figure shows an implementation of the ALU. The ALU contains an N-bit adder and N
 
 Figure 5.16 shows the symbol and hardware of 4-bit shifters. The operators <<, >>, and >>> typically indicate shift left, logical shift right, and arithmetic shift right, respectively. Depending on the value of the 2-bit shift amount, shamt1:0, the output, Y, receives the input, A, shifted by 0 to 3 bits.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/shifter.jpg" style="zoom:67%;" >
+<img src="E:\PIC\shifter.jpg" style="zoom:67%;" >
 
 #### Multiplication
 
 Figure  shows the symbol, function, and implementation of a 4 x 4 multiplier. The multiplier receives the multiplicand and multiplier, A and B, and produces the product, P. Figure (b) shows how partial products are formed. Each partial product is a single multiplier bit (B3, B2, B1, or B0) AND the multiplicand bits (A3, A2, A1, A0). With N-bit operands, there are N partial products and N - 1 stages of 1-bit adders. For example, for a 4 x 4 multiplier, the partial product of the first row is B0 AND (A3, A2, A1, A0). This partial product is added to the shifted second partial product, B1 AND (A3, A2, A1, A0). Subsequent rows of AND gates and adders form and add the remaining partial products.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/multiplication.jpg" style="zoom:67%;" >
+<img src="E:\PIC\multiplication.jpg" style="zoom:67%;" >
 
 ```verilog
 //multiplier
@@ -618,7 +618,7 @@ endmodule
 
 An N-bit binary counter, shown in Figure 5.30, is a sequential arithmetic circuit with clock and reset inputs and an N-bit output, Q. Reset initializes the output to 0. The counter then advances through all 2N possible outputs in binary order, incrementing on the rising edge of the clock.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/counters.jpg" style="zoom:67%;" >
+<img src="E:\PIC\counters.jpg" style="zoom:67%;" >
 
 
 
@@ -640,9 +640,9 @@ endmodule
 
 A shift register has a clock, a serial input, $S_{in}$, a serial output, $S_{out}$, and N parallel outputs, $Q_{N-1:0}$, as shown in Figure 5.33. On each rising edge of the clock, a new bit is shifted in from $S_{in}$ and all the subsequent contents are shifted forward. The last bit in the shift register is available at $S_{out}$. Shift registers can be viewed as serial-to-parallel converters. The input is provided serially (one bit at a time) at Sin. After N cycles, the past N inputs are available in parallel at Q. A shift register can be constructed from N flip-flops connected in series, as shown in Figure 5.34. Some shift registers also have a reset signal to initialize all of the flip-flops.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/shift register.jpg" style="zoom:60%;" >
+<img src="E:\PIC\shift register.jpg" style="zoom:60%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/shift register2.jpg" style="zoom:60%;" >
+<img src="E:\PIC\shift register2.jpg" style="zoom:60%;" >
 
 ```verilog
 //shiftreg
@@ -668,7 +668,7 @@ endmodule
 
 The memory is organized as a two-dimensional array of memory cells. The memory reads or writes the contents of one of the rows of the array. This row is  specified by an Address. The value read or written is called Data. An array with N-bit addresses and M-bit data has $2^N$ rows and M columns. Each row of data is called a word. Thus, the array contains 2N M-bit words.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/memory1.jpg" style="zoom:67%;" >
+<img src="E:\PIC\memory1.jpg" style="zoom:67%;" >
 
 <img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/memory2.jpg" style="zoom:67%;" >
 
@@ -678,13 +678,13 @@ Figure 5.39 shows a memory array with two address bits and three data bits. The 
 
 Memory arrays are built as an array of bit cells, each of which stores 1 bit of data. Figure 5.41 shows that each bit cell is connected to a wordline and a bitline. For each combination of address bits, the memory asserts a single wordline that activates the bit cells in that row. When the wordline is HIGH, the stored bit transfers to or from the bitline. Otherwise, the bitline is disconnected from the bit cell. The circuitry to store the bit varies with memory type. To read a bit cell, the bitline is initially left floating (Z). Then the wordline is turned ON, allowing the stored value to drive the bitline to 0 or 1. To write a bit cell, the bitline is strongly driven to the desired value. Then the wordline is turned ON, connecting the bitline to the stored bit. The strongly driven bitline overpowers the contents of the bit cell, writing the desired value into the stored bit.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/bit cell.jpg" style="zoom:67%;" >
+<img src="E:\PIC\bit cell.jpg" style="zoom:67%;" >
 
 #### Memory Port
 
 Multiported memories can access several addresses simultaneously. Figure 5.43 shows a three-ported memory with two read ports and one write port. Port 1 reads the data from address A1 onto the read data output RD1. Port 2 reads the data from address A2 onto RD2. Port 3 writes the data from the write data input, WD3, into address A3 on the rising edge of the clock if the write enable, WE3, is asserted.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/memory3.jpg" style="zoom:67%;" >
+<img src="E:\PIC\memory3.jpg" style="zoom:67%;" >
 
 #### DRAM
 
@@ -692,13 +692,13 @@ Figure 5.44 shows a DRAM bit cell. The bit value is stored on a capacitor. The n
 
 As shown in Figure 5.45(a), when the capacitor is charged to $V_{DD}$, the stored bit is 1; when it is discharged to GND (Figure 5.45(b)), the stored bit is 0. The capacitor node is dynamic because it is not actively driven HIGH or LOW by a transistor tied to $V_{DD}$ or GND.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/DRAM.jpg" style="zoom:67%;" >
+<img src="E:\PIC\DRAM.jpg" style="zoom:67%;" >
 
 #### SRAM 
 
 The data bit is stored on cross-coupled inverters like those described in Section 3.2. Each cell has two outputs, $bitline$ and $\overline{bitline}$. When the wordline is asserted, both nMOS transistors turn on, and data values are transferred to or from the bitlines.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/RAM.jpg" style="zoom:67%;" >
+<img src="E:\PIC\RAM.jpg" style="zoom:67%;" >
 
 ```verilog
 //RAM
@@ -723,7 +723,7 @@ endmodule
 
 Figure 5.47 shows a 32-register  32-bit three-ported register file built from a three-ported memory similar to that of Figure 5.43. The register file has two read ports (A1/RD1 and A2/RD2) and one write port (A3/WD3). The 5-bit addresses, A1, A2, and A3, can each access all $2^5=32$ registers. So, two registers can be read and one register written simultaneously.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/registerfile.jpg" style="zoom:67%;" >
+<img src="E:\PIC\registerfile.jpg" style="zoom:67%;" >
 
 ------
 
@@ -731,7 +731,7 @@ Figure 5.47 shows a 32-register  32-bit three-ported register file built from a
 
 The contents of a ROM can be indicated using dot notation. Figure 5.49 shows the dot notation for a 4-word $\times$ 3-bit ROM containing the data from Figure 5.39. A dot at the intersection of a row (wordline) and a column (bitline) indicates that the data bit is 1.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/rom.jpg" style="zoom:67%;" >
+<img src="E:\PIC\rom.jpg" style="zoom:67%;" >
 
 ```verilog
 //ROM
@@ -753,7 +753,7 @@ endmodule
 
 PLAs are built from an AND array followed by an OR array, as shown in Figure 5.54. The inputs (in true and complementary form) drive an AND array, which produces implicants, which in turn are ORed together to form the outputs. An M $\times$ N $\times$ P-bit PLA has M inputs, N implicants, and P outputs.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/PLA.jpg" style="zoom:67%;" >
+<img src="E:\PIC\PLA.jpg" style="zoom:67%;" >
 
 ROMs can be viewed as a special case of PLAs. A $2^M$-word $\times$ N-bit ROM is simply an M $\times$ 2M $\times$ N-bit PLA. The decoder behaves as an AND plane that produces all 2M minterms. The ROM array behaves as an OR plane that produces the outputs.
 
@@ -763,7 +763,7 @@ ROMs can be viewed as a special case of PLAs. A $2^M$-word $\times$ N-bit ROM is
 
 In Figure 7.1, heavy lines are used to indicate 32-bit data busses. Medium lines are used to indicate narrower busses, such as the 5-bit address busses on the register file. Narrow blue lines are used to indicate control signals, such as the register file write enable. We will use this convention throughout the chapter to avoid cluttering diagrams with bus widths. Also, state elements usually have a reset input to put them into a known state at start-up. Again, to save clutter, this reset is not shown.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/design process.jpg" style="zoom:67%;" >
+<img src="E:\PIC\design process.jpg" style="zoom:67%;" >
 
 The *program counter* is an ordinary 32-bit register. Its output, PC, points to the current instruction. Its input, PC', indicates the address of the next instruction.
 
@@ -777,13 +777,13 @@ The data memory has a single read/write port. If the write enable, WE, is 1, it 
 
 #### Single-Cycle **Datapath**
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/register file.jpg" style="zoom:67%;" >
+<img src="E:\PIC\register file.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/memory address.jpg" style="zoom:67%;" >
+<img src="E:\PIC\memory address.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/write data back.jpg" style="zoom:67%;" >
+<img src="E:\PIC\write data back.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/determine address of next instruction.jpg" style="zoom:67%;" >
+<img src="E:\PIC\determine address of next instruction.jpg" style="zoom:67%;" >
 
 ​	
 
@@ -801,15 +801,15 @@ For a $lw$ instruction, the next step is to read the source register containing 
 
 
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/datapath enhancements for R-type instruction.jpg" style="zoom:67%;" >
+<img src="E:\PIC\datapath enhancements for R-type instruction.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/datapath enhancements for beq instruction.jpg" style="zoom:67%;" >
+<img src="E:\PIC\datapath enhancements for beq instruction.jpg" style="zoom:67%;" >
 
 
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/control unit internal structure.jpg" style="zoom:67%;" >
+<img src="E:\PIC\control unit internal structure.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/complete single-cycle mips processor.jpg" style="zoom:67%;" >
+<img src="E:\PIC\complete single-cycle mips processor.jpg" style="zoom:67%;" >
 
 ------
 
@@ -817,45 +817,45 @@ For a $lw$ instruction, the next step is to read the source register containing 
 
 ​	Figure 7.17 shows that the PC is simply connected to the address input of the instruction memory. The instruction is read and stored in a new nonarchitectural Instruction Register so that it is available for future cycles. The Instruction Register receives an enable signal, called IRWrite, that is asserted when it should be updated with a new instruction.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/fetch instruction from memory.jpg" style="zoom:67%;" >
+<img src="E:\PIC\fetch instruction from memory.jpg" style="zoom:67%;" >
 
 ​	For a lw instruction, the next step is to read the source register containing the base address. This register is specified in the rs field of the instruction, $Instr_{25:21}$. These bits of the instruction are connected to one of the address inputs, A1, of the register file, as shown in Figure 7.18. The register file reads the register onto RD1. This value is stored in another nonarchitectural register, A.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/read source operand from register file.jpg" style="zoom:67%;" >
+<img src="E:\PIC\read source operand from register file.jpg" style="zoom:67%;" >
 
 ​	The address of the load is the sum of the base address and offset. We use an ALU to compute this sum, as shown in Figure 7.20. $ALUControl$ should be set to 010 to perform an addition. $ALUResult$ is stored in a nonarchitectural register called $ALUOut$.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/add base address to offset.jpg" style="zoom:67%;" >
+<img src="E:\PIC\add base address to offset.jpg" style="zoom:67%;" >
 
 ​	The next step is to load the data from the calculated address in the memory. We add a multiplexer in front of the memory to choose the memory address, Adr, from either the PC or $ALUOut$, as shown in Figure 7.21. The multiplexer select signal is called $IorD$, to indicate either an instruction or data address. The data read from the memory is stored in another nonarchitectural register, called $Data$.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/load data from memory.jpg" style="zoom:67%;" >
+<img src="E:\PIC\load data from memory.jpg" style="zoom:67%;" >
 
 ​	Finally, the data is written back to the register file, as shown in Figure 7.22. The destination register is specified by the *rt* field of the instruction, $Instr_{20:16}$.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/write data back to register file.jpg" style="zoom:67%;" >
+<img src="E:\PIC\write data back to register file.jpg" style="zoom:67%;" >
 
 ​	we must insert source multiplexers to choose the PC and the constant 4 as ALU inputs, as shown in Figure 7.23. A two-input multiplexer controlled by $ALUSrcA$ chooses either the PC or register A as $SrcA$. A four-input multiplexer controlled by $ALUSrcB $chooses either 4 or $SignImm$ as $SrcB$. We use the other two multiplexer inputs later when we extend the datapath to handle other instructions. (The numbering of inputs to the multiplexer is arbitrary.) To update the PC, the ALU adds $SrcA (PC)$ to $SrcB (4)$, and the result is written into the program counter register. The $PCWrite$ control signal enables the PC register to be written only on certain cycles.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/increment PC by 4.jpg" style="zoom:67%;" >
+<img src="E:\PIC\increment PC by 4.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/enhanced datapath for sw instruction.jpg" style="zoom:67%;" >
+<img src="E:\PIC\enhanced datapath for sw instruction.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/enhanced datapath for R-type instruction.jpg" style="zoom:67%;" >
+<img src="E:\PIC\enhanced datapath for R-type instruction.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/enhanced datapath for beq instruction.jpg" style="zoom:67%;" >
+<img src="E:\PIC\enhanced datapath for beq instruction.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/control unit internal structure2.jpg" style="zoom:67%;" >
+<img src="E:\PIC\control unit internal structure2.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/complete multicycle mips processor.jpg" style="zoom:67%;" >
+<img src="E:\PIC\complete multicycle mips processor.jpg" style="zoom:67%;" >
 
 -----
 
 #### Pipelined Processor
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/correct pipelined datapath.jpg" style="zoom:67%;" >
+<img src="E:\PIC\correct pipelined datapath.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/pipelined processor with control.jpg" style="zoom:67%;" >
+<img src="E:\PIC\pipelined processor with control.jpg" style="zoom:67%;" >
 
 
 
@@ -863,16 +863,17 @@ For a $lw$ instruction, the next step is to read the source register containing 
 
 ​	Forwarding is necessary when an instruction in the Execute stage has a source register matching the destination register of an instruction in the Memory or Writeback stage. Figure 7.50 modifies the pipelined processor to support forwarding. It adds a hazard detection unit and two forwarding multiplexers. The hazard detection unit receives the two source registers from the instruction in the Execute stage and the destination registers from the instructions in the Memory and Writeback stages. 
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/abstract pipeline diagram illustrating forwarding.jpg" style="zoom:67%;" >
+<img src="E:\PIC\abstract pipeline diagram illustrating forwarding.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/pipelined processor with forwarding to solve hazards.jpg" style="zoom:67%;" >
+<img src="E:\PIC\pipelined processor with forwarding to solve hazards.jpg" style="zoom:67%;" >
 
 ------
 
 ​	Stalls are supported by adding enable inputs (*EN*) to the Fetch and Decode pipeline registers and a synchronous reset/clear (*CLR*) input to the Execute pipeline register. When a `lw​` stall occurs, *StallD* and *StallF* are asserted to force the Decode and Fetch stage pipeline registers to hold their old values. *FlushE* is also asserted to clear the contents of the Execute stage pipeline register, introducing a bubble.
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/abstract pipeline diagram illustrating stall to solve hazards.jpg" style="zoom:67%;" >
+<img src="E:\PIC\abstract pipeline diagram illustrating stall to solve hazards.jpg" style="zoom:67%;" >
 
-<img src="https://typora-picture-stored.oss-cn-hangzhou.aliyuncs.com/img/pipelined processor with stalls to solve lw data hazard.jpg" style="zoom:67%;" >
+<img src="E:\PIC\pipelined processor with stalls to solve lw data hazard.jpg" style="zoom:67%;" >
 
 ------
+
