@@ -1106,3 +1106,112 @@ endmodule
 
 ------
 
+### Memory System
+
+​	The processor communicates with the memory system over a *memory interface*. Figure 8.1 shows the simple memory interface used in our multicycle MIPS processor. The processor sends an address over the Address bus to the memory system. For a read, *MemWrite* is 0 and the memory returns the data on the *ReadData* bus. For a write, *MemWrite* is 1 and the processor sends data to memory on the *WriteData* bus.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/The%20memory%20interface.jpg" style="zoom:67%;" >
+
+​	Figure 8.3 summarizes the memory hierarchy of the computer system discussed in the rest of this chapter. The processor first seeks data in a small but fast cache that is usually located on the same chip. If the data is not available in the cache, the processor then looks in main memory. If the data is not there either, the processor fetches the data from virtual memory on the large but slow hard disk. 
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/A%20typical%20memory%20hierarchy.jpg" style="zoom:67%;" >
+
+------
+
+​	Recall that temporal locality means that the processor is likely to access a piece of data again soon if it has accessed that data recently. Therefore, when the processor loads or stores data that is not in the cache, the data is copied from main memory into the cache. Subsequent requests for that data hit in the cache.
+​	Recall that spatial locality means that, when the processor accesses a piece of data, it is also likely to access data in nearby memory locations. Therefore, when the cache fetches one word from memory, it may also fetch several adjacent words. This group of words is called a cache block. The number of words in the cache block, b, is called the block size. A cache of capacity C contains B = C/b blocks.
+
+​	
+
+​	A cache is organized into S sets, each of which holds one or more blocks of data. The relationship between the address of data in main memory and the location of that data in the cache is called the mapping. Each memory address maps to exactly one set in the cache. Some of the address bits are used to determine which cache set contains the data. If the set contains more than one block, the data may be kept in any of the blocks in the set.
+
+------
+
+### Direct Mapped cache
+
+​	A direct mapped cache has one block in each set, so it is organized into S = B sets. This mapping is illustrated in Figure 8.5 for a direct mapped cache with a capacity of eight words and a block size of one word. The cache has eight sets, each of which contains a one-word block. The bottom two bits of the address are always 00, because they are word aligned. The next $log_28 = 3 bits$ indicate the set onto which the memory address maps. Thus, the data at addresses 0x00000004, 0x00000024, . . . , 0xFFFFFFE4 all map to set 1, as shown in blue. Likewise, data at addresses 0x00000010, . . . , 0xFFFFFFF0 all map to set 4, and so forth. Each main memory address maps to exactly one set in the cache.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Mapping%20of%20main%20memory%20to%20a%20direct%20mapped%20cache.jpg" style="zoom:67%;" >
+
+​	Sometimes, such as when the computer first starts up, the cache sets contain no data at all. The cache uses a valid bit for each set to indicate whether the set holds meaningful data. If the valid bit is 0, the contents are meaningless.
+
+​	Figure 8.7 shows the hardware for the direct mapped cache of Figure 8.5. The cache is constructed as an eight-entry SRAM. Each entry, or set, contains one line consisting of 32 bits of data, 27 bits of tag, and 1 valid bit. The cache is accessed using the 32-bit address. The two least significant bits, the byte offset bits, are ignored for word accesses. The next three bits, the set bits, specify the entry or set in the cache.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Direct%20mapped%20cache%20with%208%20sets.jpg" style="zoom:67%;" >
+
+------
+
+### Multi-way Set Associative Cache
+
+​	Figure 8.9 shows the hardware for a C = 8-word, N = 2-way set associative cache. The cache now has only S = 4 sets rather than 8. Thus, only $log_24 = 2$ set bits rather than 3 are used to select the set. The tag increases from 27 to 28 bits. Each set contains two ways or degrees of associativity. Each way consists of a data block and the valid and tag bits. The cache reads blocks from both ways in the selected set and checks the tags and valid bits for a hit. If a hit occurs in one of the ways, a multiplexer selects data from that way.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Two-way%20set%20associative%20cache.jpg" style="zoom:67%;" >
+
+-----
+
+### Fully Associative Cache
+
+​	A fully associative cache contains a single set with B ways, where B is the number of blocks. A memory address can map to a block in any of these ways. A fully associative cache is another name for a B-way set associative cache with one set.
+​	Figure 8.11 shows the SRAM array of a fully associative cache with eight blocks. Upon a data request, eight tag comparisons (not shown) must be made, because the data could be in any block. Similarly, an 8:1 multiplexer chooses the proper data if a hit occurs. 
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Eight-block%20fully%20associative%20cache.jpg" style="zoom:67%;" >
+
+------
+
+### Block Size
+
+​	Figure 8.12 shows the hardware for a C = 8-word direct mapped cache with a b = 4-word block size. The cache now has only B = C/b = 2 blocks. A direct mapped cache has one block in each set, so this cache is organized as two sets. Thus, only $log_22 = 1$ bit is used to select the set. A multiplexer is now needed to select the word within the block. The multiplexer is controlled by the $log_24 = 2$ block offset bits of the address. The most significant 27 address bits form the tag. Only one tag is needed for the entire block, because the words in the block are at consecutive addresses.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Direct%20mapped%20cache%20with%20two%20sets%20and%20a%20four-word%20block%20size.jpg" style="zoom:67%;" >
+
+------
+
+​	Caches are organized as two-dimensional arrays. The rows are called sets, and the columns are called ways. Each entry in the array consists of a data block and its associated valid and tag bits. Caches are characterized by
+
+* capacity C
+
+* block size b (and number of blocks, B = C/b)
+* number of blocks in a set (N)
+
+​    Table 8.2 summarizes the various cache organizations. Each address in memory maps to only one set but can be stored in any of the ways. 
+
+​	Cache capacity, associativity, set size, and block size are typically powers of 2. This makes the cache fields (tag, set, and block offset bits) subsets of the address bits.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Cache%20organizations.jpg" style="zoom:67%;" >
+
+------
+
+### VIRTUAL MEMORY
+
+​	Virtual memory is divided into virtual pages, typically 4 KB in size. Physical memory is likewise divided into physical pages of the same size. A virtual page may be located in physical memory (DRAM) or on the disk. 
+
+​	Figure 8.20 shows a virtual memory that is larger than physical memory. The rectangles indicate pages. Some virtual pages are present in physical memory, and some are located on the disk. The process of determining the physical address from the virtual address is called address translation. If the processor attempts to access a virtual address that is not in physical memory, a page fault occurs, and the operating system loads the page from the hard disk into physical memory.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Virtual%20and%20physical%20pages.jpg" style="zoom:67%;" >
+
+​	The most significant bits of the virtual or physical address specify the virtual or physical page number. The least significant bits specify the word within the page and are called the page offset.
+
+------
+
+​	Figure 8.21 illustrates the page organization of a virtual memory system with 2 GB of virtual memory and 128 MB of physical memory divided into 4-KB pages. MIPS accommodates 32-bit addresses. With a 2-GB = $2^{31}$-byte virtual memory, only the least significant 31 virtual address bits are used; the 32nd bit is always 0. Similarly, with a 128-MB = $2^{27}$-byte physical memory, only the least significant 27 physical address bits are used; the upper 5 bits are always 0. Because the page size is 4 KB = $2^{12}$ bytes, there are $2^{31}/2^{12}$ = $2^{19}$ virtual pages and $2^{27}$/$2^{12}$ = $2^{15}$ physical pages. Thus, the virtual and physical page numbers are 19 and 15 bits, respectively. Physical memory can only hold up to 1/16th of the virtual pages at any given time. The rest of the virtual pages are kept on disk. The least significant 12 bits of the virtual and physical addresses are the same and specify the page offset within the virtual and physical pages. Only the page number needs to be translated to obtain the physical address from the virtual address.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/physical%20and%20virtual%20pages.jpg" style="zoom:67%;" >
+
+-------
+
+​	Figure 8.22 illustrates the translation of a virtual address to a physical address. The least significant 12 bits indicate the page offset and require no translation. The upper 19 bits of the virtual address specify the virtual page number (VPN) and are translated to a 15-bit physical page number (PPN). 
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Translation%20from%20virtual%20address%20to%20physical%20address.jpg" style="zoom:67%;" >
+
+------
+
+#### The Page Table
+
+​	The processor uses a page table to translate virtual addresses to physical addresses. Recall that the page table contains an entry for each virtual page. This entry contains a physical page number and a valid bit. If the valid bit is 1, the virtual page maps to the physical page specified in the entry. Otherwise, the virtual page is found on disk.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/The%20page%20table%20for%20Figure%208.21.jpg" style="zoom:67%;" >
+
+​	The page table can be stored anywhere in physical memory, at the discretion of the OS. The processor typically uses a dedicated register, called the page table register, to store the base address of the page table in physical memory.
+
+​	<u>To perform a load or store, the processor must first translate the virtual address to a physical address and then access the data at that physical address. The processor extracts the virtual page number from the virtual address and adds it to the page table register to find the physical address of the page table entry. The processor then reads this page table entry from physical memory to obtain the physical page number. If the entry is valid, it merges this physical page number with the page offset to create the physical address. Finally, it reads or writes data at this physical address.</u> Because the page table is stored in physical memory, each load or store involves two physical memory accesses.
+
