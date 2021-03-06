@@ -1215,3 +1215,35 @@ endmodule
 
 ​	<u>To perform a load or store, the processor must first translate the virtual address to a physical address and then access the data at that physical address. The processor extracts the virtual page number from the virtual address and adds it to the page table register to find the physical address of the page table entry. The processor then reads this page table entry from physical memory to obtain the physical page number. If the entry is valid, it merges this physical page number with the page offset to create the physical address. Finally, it reads or writes data at this physical address.</u> Because the page table is stored in physical memory, each load or store involves two physical memory accesses.
 
+------
+
+#### The Translation Lookaside Buffer
+
+​	In general, the processor can keep the last several page table entries in a small cache called a ***translation lookaside buffer (TLB)***. The processor “looks aside” to find the translation in the TLB before having to access the page table in physical memory. 
+
+​	A TLB is organized as a fully associative cache and typically holds 16 to 512 entries. Each TLB entry holds a virtual page number and its corresponding physical page number. The TLB is accessed using the virtual page number. If the TLB hits, it returns the corresponding physical page number. Otherwise, the processor must read the page table in physical memory.
+
+​	Figure 8.25 shows the two-entry TLB with the request for virtual address 0x247C. The TLB receives the virtual page number of the incoming address, 0x2, and compares it to the virtual page number of each entry.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Address%20translation%20using%20a%20two-entry%20TLB.jpg" style="zoom:67%;" >
+
+------
+
+#### Multilevel Page Tables
+
+​	To conserve physical memory, page tables can be broken up into multiple (usually two) levels. The first-level page table is always kept in physical memory. It indicates where small second-level page tables are stored in virtual memory. The second-level page tables each contain the actual translations for a range of virtual pages. If a particular range of translations is not actively used, the corresponding second-level page table can be swapped out to the hard disk so it does not waste physical memory.
+
+​	In a two-level page table, the virtual page number is split into two parts: the ***page table number*** and the ***page table offset***, as shown in Figure 8.26. The page table number indexes the first-level page table, which must reside in physical memory. The first-level page table entry gives the base address of the second-level page table or indicates that it must be fetched from disk when V is 0. The page table offset indexes the second-level page table. The remaining 12 bits of the virtual address are the page offset, as before, for a page size of $2^{12}$ = 4​ KB.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Hierarchical%20page%20tables.jpg" style="zoom:67%;" >
+
+------
+
+#### MEMORY-MAPPED I/O
+
+​	In a system with memory-mapped I/O, a load or store may access either memory or an I/O device. Figure 8.28 shows the hardware needed to support two memory-mapped I/O devices. An address decoder determines which device communicates with the processor. It uses the ***Address*** and ***MemWrite*** signals to generate control signals for the rest of the hardware. The ***ReadData*** multiplexer selects between memory and the various I/O devices. Write-enabled registers hold the values written to the I/O devices.
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Support%20hardware%20for%20memory-mapped%20IO.jpg" style="zoom:67%;" >
+
+------
+
