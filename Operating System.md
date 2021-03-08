@@ -1,0 +1,461 @@
+# Introduction
+
+​		一个运行的程序仅仅执行一件简单的事情：**执行指令**。处理器从内存中**取指令（fetch）**，进行**译码（decode）**，并且**执行（execute）**，这一过程每秒发生百万次甚至亿万次。完成这一过程后，处理器继续下一条指令，直到程序彻底完成。
+
+> Many millions (and these days, even billions) of times every second, the processor fetches an instruction from memory, decodes it (i.e., figures out which instruction this is), and executes it (i.e., it does the thing that it is supposed to do, like add two numbers together, access memory, check a condition, jump to a function, and so forth). After it is done with this instruction, the processor moves on to the next instruction, and so on, and so on, until the program finally completes.
+
+---
+
+### Virtualizing CPU
+
+因为**虚拟化**允许大量程序运行（共享CPU），同时存取它们自己的指令和数据（共享内存），访问设备（共享硬盘之类），操作系统被认为是**资源管理器**。任意的CPU，内存和设备都是系统中的资源。
+
+``````c
+//cpu.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h> 
+#include <assert.h>
+#include "common.h"
+
+int
+main(int argc, char *argv[])
+{
+	if (argc != 2) {
+			fprintf(stderr, "usage: cpu <string>\n");
+            exit(1);
+	}
+	char *str = argv[1]; 
+	while (1) {
+		Spin(1);
+        printf("%s\n", str);
+    }
+    return 0;
+}
+``````
+
+*该程序所做的只有call `Spin()`，一个重复检查时间并且当它运行一秒时返回。然后，它将用户输入在命令行中的字符串打印，并且一直重复该过程*
+
+```shell
+prompt> gcc -o cpu cpu.c -Wall
+prompt> ./cpu "A"
+A
+A
+A
+A
+ˆC
+prompt>
+```
+
+```shell
+prompt> ./cpu A & ./cpu B & ./cpu C & ./cpu D & 
+[1] 7353 
+[2] 7354 
+[3] 7355 
+[4] 7356 
+A 
+B 
+D 
+C
+A
+B 
+D 
+C 
+A 
+...
+```
+
+* **虚拟化CPU（virtualizing the CPU）**：将单个CPU（或者其中一小部分）转化为看起来数量为无限的CPU，并且使许多程序看似能够同时运行。
+
+* > Turning a single CPU (or a small set of them) into a seemingly infinite number of CPUs and thus allowing many programs to seemingly run at once is what we call **virtualizing the CPU**.
+
+---
+### Virtualizing Memory
+
+```c
+//mem.c
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "common.h"
+int
+main(int argc, char *argv[])
+{
+	int *p = malloc(sizeof(int));
+    assert(p != NULL);
+	printf("(%d) address pointed to by p: %p\n", getpid(), p);
+	*p = 0;
+	while (1) { 
+		Spin(1);
+		*p = *p + 1;
+        printf("(%d) p: %d\n", getpid(), *p);
+    } 
+return 0;
+}
+```
+
+```shell
+prompt> ./mem
+(2134) address pointed to by p: 0x200000
+(2134) p: 1 
+(2134) p: 2 
+(2134) p: 3 
+(2134) p: 4 
+(2134) p: 5
+ˆC
+```
+
+```shell
+prompt> ./mem &; ./mem & 
+[1] 24113 
+[2] 24114 
+(24113) address pointed to by p: 0x200000 
+(24114) address pointed to by p: 0x200000 
+(24113) p: 1 
+(24114) p: 1 
+(24114) p: 2 
+(24113) p: 2 
+(24113) p: 3
+(24114) p: 3
+(24113) p: 4
+(24114) p: 4
+...
+```
+
+* **虚拟化内存：**每一个进程访问其**私有虚拟地址空间**（有时被称作地址空间，*address space*），操作系统以某种方式映射到物理内存上。
+
+* > Indeed, that is exactly what is happening here as the OS is virtualizing memory. Each process accesses its own private virtual address space (sometimes just called its address space), which the OS somehow maps onto the physical memory of the machine.
+
+---
+
+### Concurrency
+
+```c
+//threads.c
+#include <stdio.h>
+#include <stdlib.h>
+#include "common.h"
+#include "common_threads.h"
+
+volatile int counter = 0;
+int loops;
+
+void *worker(void *arg) {
+	int i;
+	for (i = 0; i < loops; i++) { 
+		counter++;
+	} 
+    return NULL;
+}
+int main(int argc, char *argv[]) {
+	if (argc != 2) {
+		fprintf(stderr, "usage: threads <value>\n");
+        exit(1);
+	}
+	loops = atoi(argv[1]);
+    pthread_t p1, p2;
+	printf("Initial value : %d\n", counter);
+    
+    Pthread_create(&p1, NULL, worker, NULL);
+	Pthread_create(&p2, NULL, worker, NULL);
+    Pthread_join(p1, NULL);
+    Pthread_join(p2, NULL);
+	printf("Final value : %d\n", counter);
+    return 0;
+}
+```
+
+```shell
+prompt> gcc -o thread thread.c -Wall -pthread
+prompt> ./thread 1000
+Initial value : 0
+Final value : 2000
+```
+
+```shell
+prompt> ./thread 100000 
+Initial value : 0
+Final value : 143012	//错误
+prompt> ./thread 100000
+Initial value : 0
+Final value : 137298	//错误
+```
+
+*主程序通过`Pthread create()`创造两个**线程（thread）***
+
+​		上面过程的关键部分是增加共享计数器。它需要 3 条指令： 一条将计数器的值从内存加载到寄存器， 一条将其递增，另一条将其保存回内存。因为这3条指令并不是以**原子方式 ( atomically)** 执行（所有的指令一次性执行）的，所以会发生错误。
+
+---
+
+###  Persistence
+
+> 与操作系统为CPU和内存提供的抽象不同，操作系统并不为任意应用程序创造私有的、虚拟的磁盘。
+
+**操作系统如何将文件写入磁盘：**
+
+1. 确定新数据写入到磁盘的位置*（first figuring out where on disk this new data will reside）*
+2. 在文件系统维护的各种结构中对其进行记录*（keeping track of it in various structures the file system maintains）*
+
+---
+
+### Design Goal
+
+1. 提供高性能*（provide high performance）*或者说最小化操作系统的开销*（minimize the overheads of the OS）*
+2. 在应用程序之间及操作系统和应用程序之间提供保护*（provide protection between applications, as
+   well as between the OS and applications）*
+
+------
+
+# Virtualization
+
+进程：运行中的程序
+
+> The definition of a **process**, informally, is quite simple: it is a running program.
+
+通过运行一个程序，然后停止该程序，再运行另一个程序，以此类推，操作系统提供了仅有一个物理CPU时存在多个虚拟CPU的假象，这就是**时分共享**CPU技术，能够允许用户如愿运行多个并行程序。
+
+
+
+**时分共享 (time sharing) **是操作系统共享资源所使用的最基本的技术之一。 通过允许资源由一个实 体使用一小段时间，然后由另一个实体使用一小段时间，如此下去，所谓的资源（例如，CPU或网络链接）可以被许多人共享。时分共享的自然对应技术是空分共享，资源在空间上被划分给希望使用它的人。例如，磁盘空间自然是一个空分共享资源，因为一旦将块分配给文件，在用户删除文件之前，不可能将它分配给其他文件。
+
+> **Time sharing** is a basic technique used by an OS to share a resource. By allowing the resource to be used for a little while by one entity, and then a little while by another, and so forth, the resource in question (e.g., the CPU, or a network link) can be shared by many. The counterpart of time sharing is space sharing, where a resource is divided (in space) among those who wish to use it. For example, disk space is naturally a space-shared resource; once a block is assigned to a file, it is normally not assigned to another file until the user deletes the original file.
+
+---
+
+### The Abstraction: A Process
+
+**机器状态（*machine state*）：**程序在运行时可以读取或者更新的内容
+
+**内存（*memory*）**是进程的机器状态的一个明显的组成部分，指令存放在内存中，运行中的程序读写的数据也存放在内存中。因此，进程可以访问的内存（称为**地址空间**， *address space*）是进程的一部分。
+
+**寄存器（*register*）**是进程的机器状态的另一部分。很多指令显式地读取或者更新寄存器，因此，寄存器明显对进程的执行有重要的作用。
+
+注意：一个特殊的寄存器组成机器状态的一部分。例如：**程序计数器**（***program counter***，有时也被称作**指令指针，Instruction Pointer， IP**）告诉我们程序将会执行的下一条指令；**栈指针** (***stack pointer***) 和相关的**帧指针** (***frame pointer*** ) 用于管理函数参数栈、局部变量和返回地址。
+
+------
+
+#### Process API
+
+现代操作系统必须以某种形式提供这些API：
+
+* 创建（create）：一个操作系统必须包括一些创建新进程的方法
+* 销毁（destroy）：由于存在进程创建的接口，系统应当提供强制销毁进程的接口
+* 等待（wait）：有时候等待进程结束运行是有用的，因此某种等待接口会被提供
+* 其他控制（miscellaneous control）：除了杀死或者等待进程，有时存在一些其他控制。例如，大部分的操作系统提供一些方法来暂停进程，然后重启
+* 状态（status）：通常存在一些接口能够获得一些进程的状态信息
+
+---
+
+#### Process Creation: A Little More Detail
+
+​		操作系统运行程序首先做的一件事是：**加载（*load*）**程序的代码和所有静态数据（例如初始化变量）到内存中，加载到进程的地址空间中。程序最初以某种可执行格式驻留在磁盘上，因此，将程序和静态数据加载到内存中的过程，需要操作系统从磁盘中读取这些字节，并放到内存中的某处。
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/Loading%20From%20Program%20To%20Process.jpg" alt="Loading: From Program To Process" style="zoom:67%;" />
+
+​		程序运行之前操作系统仍有一些事要做：必须为程序的**运行时栈**（***run-time stack***，或者**栈**，***stack***）分配内存。操作系统也会为程序的**堆**（***heap***）分配一些内存，堆会被诸如链表，散列表，树之类的数据结构所需要。操作系统还执行一些其他的初始化任务，尤其是与I/O相关的任务。例如，在Unix操作系统中，每一个进程都默认有三个打开的**文件描述符**（***file description***），用于标准输入、输出、错误，这些文件描述符让程序轻松地读取终端中的输入并输出至屏幕。
+
+​		通过将代码和静态数据加载到内存中，通过创建和初始化栈以及执行与 I/O 设置相关的其他工作，操作系统仅剩下随后一项任务：在入口处运行，启动程序，即`main()`。通过跳转到`main()`例程，操作系统将CPU的控制权交到新创建的进程中，从而程序开始执行。
+
+---
+
+#### Process States
+
+一个程序可以是下列三个状态的其中一个：
+
+* 运行（running）：在运行状态，进程正运行在处理器上，这意味着正在执行指令
+* 就绪（ready）：在就绪状态下，进程已准备好运行，但是由于一些原因，操作系统选择不在此时运行
+* 阻塞（blocked）：在阻塞状态下，进程执行了某些操作，直到发生了其他事件时才会运行
+
+---
+
+#### Data Structure
+
+为了追踪每个进程的状态，操作系统可能会为所有就绪的进程准备某种**进程列表**（***process list***），以及跟踪当前正在运行的进程的一些附加信息
+
+```c
+// the registers xv6 will save and restore
+// to stop and subsequently restart a process
+struct context {
+    int eip; 
+    int esp; 
+    int ebx;
+    int ecx; 
+    int edx; 
+    int esi;
+    int edi;
+    int ebp;
+};
+
+/ the different states a process can be in enum proc_state { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
+// the information xv6 tracks about each process 
+// including its register context and state
+struct proc { 
+    char *mem;	// Start of process memory 
+    uint sz;	// Size of process memory
+	char *kstack;	// Bottom of kernel stack 
+    				// for this process
+    enum proc_state state;	// Process state
+    int pid;	// Process ID
+	struct proc *parent;	// Parent process
+    void *chan;		// If !zero, sleeping on chan
+    int killed;		// If !zero, has been killed
+	struct file *ofile[NOFILE]; // Open files
+    struct inode *cwd;		//Curent directory
+    struct context context;		//Switch here to run process
+    struct trapframe *tf;		//Trap frame for the
+    							//current interrupt
+```
+
+​		**上下文切换（*context switch*）：**对于停止的进程，**寄存器上下文**（***register context***）将保存其寄存器的内容。当一个进程停止时，它的寄存器会被保存到它的内存位置。通过恢复这些寄存器（将它们的值放回到实际的物理寄存器中），操作系统能够恢复运行进程。
+
+​		有时候，系统会有一个**初始**（***initial***）状态，表示进程处于被创建的状态。除此以外，进程也会处于已退出但未被清理的**最终**（***final***）状态，*在UNIX-based 系统中，这被称作僵尸（zombie）状态*。最终状态非常有用，因为它允许其他进程（通常时创建进程的父进程）检验进程的返回代码，并且查看刚刚结束的进程是否成功执行。完成后，父进程将执行一个最后一个调用，以等待子进程的完成，并告诉操作系统可以清理这个正在结束的进程的所有相关数据结构。
+
+---
+
+* 进程是运行中的程序的一个主要操作系统抽象。在任何时间，进程都可以它的状态来描述：位于其地址空间的内存的内容，CPU寄存器中的内容（包括程序计数器，栈帧，等等）和I/O相关的信息
+* 进程接口包括与进程相关的调用程序
+* 进程存在多种不同的进程状态，包括运行、就绪和阻塞。不同的事件将进程从一个状态转换为其他的状态
+* 一个进程列表包含了系统中所有进程的信息。每一个入口能在process control block（PCB）中被发现
+
+>* The process is the major OS abstraction of a running program. At any point in time, the process can be described by its state: the contents of memory in its address space, the contents of CPU registers (including the program counter and stack pointer, among others), and information about I/O (such as open files which can be read or written).
+>* The process API consists of calls programs can make related to processes. Typically, this includes creation, destruction, and other useful calls.
+>* Processes exist in one of many different process states, including running, ready to run, and blocked. Different events (e.g., getting scheduled or descheduled, or waiting for an I/O to complete) transition a process from one of these states to the other.
+>* A process list contains information about all processes in the system. Each entry is found in what is sometimes called a process control block (PCB), which is really just a structure that contains information about a specific process.
+
+---
+
+### Interlude: Process API
+
+#### The fork() System Call
+
+**进程描述符**（***process identifier***）：在UNIX系统中，如果要操作一个进程，就要通过PID指明
+
+```c
+//call.c
+#include <stdio.h> 
+#include <stdlib.h>
+#include <unistd.h>
+int main(int argc, char *argv[]) {
+    printf("hello world (pid:%d)\n", (int) getpid()); 
+    int rc = fork(); 
+    if (rc < 0) {
+        // fork failed
+        fprintf(stderr, "fork failed\n");
+        exit(1);
+    }
+    else if (rc == 0) {
+        // child (new process)
+        printf("hello, I am child (pid:%d)\n", (int) getpid());
+    }else {
+        // parent goes down this path (main)
+        printf("hello, I am parent of %d (pid:%d)\n", rc, (int) getpid());
+    }
+    return 0;
+ }
+```
+
+```shell
+$ ./call
+hello world (pid:178)
+hello, I am parent of 179 (pid:178)
+hello, I am child (pid:179)
+```
+
+`fork()`被调用时存在三种可能的返回值：
+
+* 在父进程中，`fork()`返回新创建子进程的进程ID
+* 在子进程中，`fork()`返回0
+* 如果出现错误，`fork()`返回一个负值
+
+
+
+​		当程序刚开始运行时，进程打印了一个“hello world”的信息，其中包括了它的进程描述符（PID）。然后，进程调用了`fork()`系统调用。新创建的进程几乎与调用进程完全一样。新创建的进程称为子进程（child），原来的进程称为父进程（parent）。子进程并不会从`main()`函数开始执行（由于hello world只输出了一次），而是直接从`fork()`系统调用返回。
+
+​		子进程并不是一份完全的拷贝，虽然它拥有自己的地址空间，寄存器，程序计数器，等等，但是它从`fork()`中的返回值是不同的。父进程接收到的是它新创建的子进程的PID，而子进程获得的返回值是`0`。
+
+---
+
+#### The wait() System Call
+
+```c
+//call2.c
+#include <stdio.h> 
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+int main(int argc, char *argv[]) {
+    printf("hello world (pid:%d)\n", (int) getpid()); 
+    int rc = fork(); 
+    if (rc < 0) {
+        // fork failed; exit
+        fprintf(stderr, "fork failed\n"); 
+        exit(1);
+    } else if (rc == 0) { 
+        // child (new process)
+        printf("hello, I am child (pid:%d)\n", (int) getpid());
+        } else {        // parent goes down this path (main)
+            int rc_wait = wait(NULL);
+            printf("hello, I am parent of %d (rc_wait:%d) (pid:%d)\n", rc, rc_wait, (int) getpid());
+        } 
+    return 0;
+}
+```
+
+```shell
+$  ./call2
+hello world (pid:195)
+hello, I am child (pid:196)
+hello, I am parent of 196 (rc_wait:196) (pid:195)
+```
+
+在该例子中，父进程调用了`wait()`来延迟执行直到子进程结束执行。当子进程结束后，`wait()`返回到父进程。
+
+对`wait()`的调用会阻塞调用进程，直到它的一个子进程退出或接收到信号。子进程终止后，父进程继续执行`wait()`系统调用后面的指令。
+
+* 如果进程有多个子进程，则在调用`wait()`后，如果没有子进程终止，则父进程必须处于等待状态
+* 如果只有一个子进程终止，则返回`wait()`返回终止的子进程的进程ID
+* 如果终止了多个子进程，则`wait()`将获取任意的子进程并返回该子进程的进程ID
+
+---
+
+#### The exec() System Call
+
+```c
+//call3.c
+#include <stdio.h>
+#include <stdlib.h> 
+#include <unistd.h>
+#include <string.h> 
+#include <sys/wait.h>
+int main(int argc, char *argv[]) {
+    printf("hello world (pid:%d)\n", (int) getpid()); 
+    int rc = fork(); 
+    if (rc < 0) {
+        // fork failed; exit
+        fprintf(stderr, "fork failed\n"); 
+        exit(1);
+    } else if (rc == 0) { 
+        // child (new process)
+        printf("hello, I am child (pid:%d)\n", (int) getpid()); 
+        char *myargs[3];
+        myargs[0] = strdup("wc"); // program: "wc" (word count) 
+        myargs[1] = strdup("call3.c"); // argument: file to count 
+        myargs[2] = NULL; // marks end of array
+        execvp(myargs[0], myargs); // runs word count 
+        printf("this shouldn’t print out");
+    }   else {                  // parent goes down this path (main)
+        int rc_wait = wait(NULL);
+        printf("hello, I am parent of %d (rc_wait:%d) (pid:%d)\n", rc, rc_wait, (int) getpid());
+    } 
+    return 0; 
+}
+```
+
+```shell
+$ ./call
+hello world (pid:240)
+hello, I am child (pid:241)
+ 26 122 974 call3.c
+hello, I am parent of 241 (rc_wait:241) (pid:240)
+```
+
