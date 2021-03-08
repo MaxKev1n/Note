@@ -1,4 +1,4 @@
-# Introduction
+# cIntroduction
 
 ​		一个运行的程序仅仅执行一件简单的事情：**执行指令**。处理器从内存中**取指令（fetch）**，进行**译码（decode）**，并且**执行（execute）**，这一过程每秒发生百万次甚至亿万次。完成这一过程后，处理器继续下一条指令，直到程序彻底完成。
 
@@ -452,10 +452,57 @@ int main(int argc, char *argv[]) {
 ```
 
 ```shell
-$ ./call
+$ ./call3
 hello world (pid:240)
 hello, I am child (pid:241)
  26 122 974 call3.c
 hello, I am parent of 241 (rc_wait:241) (pid:240)
 ```
+
+​		给定可执行程序的名称和参数后，`exec()`从可执行程序中加载代码（以及静态数据），并且覆写代码段（及现有的静态数据）；堆和栈，以及程序内存空间的其他部分被重新初始化。然后，操作系统简单地运行程序，将参数通过`argv`传递给进程。这并不会创建一个新的进程，它将正在运行的程序（`call3`)转换为一个不同的程序（`wc`）子进程调用`exec()`后，就像从来没有运行过`call3`一样。成功的`exec()`调用永远不会返回。
+
+> 实际上， exec() 有几种变体： `execl`， `execlp()` ，`execle()` ，`execv()`， `execvp()`和`execvp()` 。
+
+---
+
+```c
+#include <stdio.h>
+#include <stdlib.h> 
+#include <unistd.h>
+#include <string.h> 
+#include <fcntl.h>
+#include <sys/wait.h>
+int main(int argc, char *argv[]) {
+    int rc = fork(); 
+    if (rc < 0) {
+        // fork failed; exit
+        fprintf(stderr, "fork failed\n"); 
+        exit(1);
+    } else if (rc == 0) { 
+        // child: redirect standard output to a file 
+        close(STDOUT_FILENO);
+        open("./call4.output", O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+        
+        // now exec "wc"...
+        char *myargs[3];
+        myargs[0] = strdup("wc"); // program: "wc" (word count) 
+        myargs[1] = strdup("call4.c"); // argument: file to count 
+        myargs[2] = NULL; // marks end of array
+        execvp(myargs[0], myargs); // runs word count 
+    }   else {                  // parent goes down this path (main)
+        int rc_wait = wait(NULL);
+    } 
+    return 0; 
+}
+```
+
+```shell
+$ ./call4
+$ cat call4.output
+ 27 108 887 call4.c
+```
+
+​		**重定向**（***redirected***）的工作原理，是基于对操作系统管理文件描述符的假定。UNIX系统从0开始寻找可以使用的文件描述符。在这个例子中，STDOUT _FILENO 将成为第一个可用的文件描述符，因此在`open()`被调用时，得到赋值。然后子进程向标准输出文件描述符的写入（例如通过`printf()`这样的函数），都被透明地转向新打开的文件，而不是屏幕。`call4`确实调用了`fork()`来创建新的子进程，然后通过对`execvp()`的调用运行`wc`程序。没有在屏幕上看见任何输出的原因在于输出被重定向到了文件`call.output`。
+
+------
 
