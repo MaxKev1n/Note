@@ -692,3 +692,23 @@ $$
 
 ------
 
+#### A New Metric: Response Time
+
+**响应时间**（***response time***）：从任务到达系统到首次运行的时间
+$$
+T_{response}=T_{firstrun}-T_{arrival}
+$$
+
+#### Round Robin
+
+**轮转**（***round robin***）调度：轮转调度在一个**时间片**（***time slice***）内运行工作并且切换到运行队列中的下一个任务，而不是运行工作直到结束。它反复执行，直到所有任务完成。因此，轮状有时也被称作**时间切片**（***time-slicing***）。**时间片的长度必须是时间中断周期的倍数**。时间片长度对于轮转是至关重要的，越短，轮转在响应时间上的表现越好。然而，时间片过短会有一个问题：切换上下文带来的消耗会影响整体的性能。
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/SJF%20Again%20and%20Round%20Robin.jpg" style="zoom:67%;" >
+
+
+$$
+T_{response} = T_{firstrun}-T_{arrival}
+$$
+
+------
+
