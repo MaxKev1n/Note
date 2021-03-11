@@ -647,3 +647,48 @@ swtch:
 
 ------
 
+### Scheduling : Introduction
+
+​		我们做出的**工作负载**（***workload***）假说是不切实际的，但是这没有问题（目前），因为我们将会放宽这些假定，并最终开发出我们所谓的一个完全可操作的调度准则：
+
+1. 每一个工作运行相同的时间
+2. 所有的任务在同一时间到达
+3. 一旦开始，任务会运行至结束
+4. 所有的工作只会使用CPU
+5. 每一个工作的运行时间是知道的
+
+------
+
+#### Scheduling Metrics
+
+任务的周转时间定义为任务完成时间减去任务到达系统的时间：
+$$
+T_{turnaround} = T_{completion} - T_{arrival}
+$$
+
+#### First In，First Out（FIFO）
+
+我们可以实现的最基本的算法是**先进先出**，有时我们也称之为**先到先服务**（***First Come， First Served（FCFS）***）。该算法会存在被称为**护航效应**（***convoy effect***）的问题，一些耗时较少的潜在资源消费者会被排到重量级的资源消费者后，导致耗时增加。
+
+<img src = "https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/FIFO%20Simple%20Example.jpg" style="zoom:67%;" >
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/Why%20FIFO%20Is%20Not%20That%20Great.jpg" style="zoom:67%;" >
+
+
+
+#### Shortest Job First （SJF）
+
+**最短任务优先**：先运行最短的任务，然后是次短的任务，如此下去。但是该算法仍然会遇到同样的护航问题。
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/SJF%20Simple%20Example.jpg" style="zoom:67%;" >
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/SJF%20With%20Late%20Arrivals%20From%20B%20and%20C.jpg" style="zoom:67%;" >
+
+#### Shortest Time-to-Completion First (STCF)
+
+**最短完成时间优先**：或者抢占式最短作业优先。每当新工作进入系统时，它会确定剩余的工作（包括新工作）谁的剩余时间最少，然后调度该工作。
+
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/STCF%20Simple%20Example.jpg" style="zoom:67%;" >
+
+------
+
