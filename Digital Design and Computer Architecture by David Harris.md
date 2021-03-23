@@ -4,6 +4,71 @@
 * sign/magnitude
 * two's complement : inverting all of the bits in the number, then adding 1 to the least significant bit position. 
 
+------
+
+#### gray code
+
+三位二进制码转换为三位格雷码：
+
+$G_2 = B_2$
+
+$G_1 = B_2 \bigoplus B_1$
+
+$G_0 = B_1 \bigoplus B_0$
+
+三位格雷码转换为三位二进制码：
+
+$B_2 = G_2$
+
+$B_1 =  B_2 \bigoplus G_1$
+
+$B_0 = B_1 \bigoplus G_0$
+
+---
+
+#### 逻辑代数常用公式
+
+* 消去律：$AB+A\bar{B}=A$
+* 吸收律1：$A+AB=A$
+* 吸收律2：$A+\bar{A}B=A+B$
+* 包含律：$AB+\bar{A}C+BC=AB+\bar{A}C$
+* 对偶数个变量而言，异或是同或的反函数
+* 对奇数个变量而言，异或与同或相同
+* $A(B\oplus C)=A\oplus B+A\oplus C$
+* $A+(B\odot C)=(A+B)\odot (A+C)$
+
+
+
+#### 公式法化简
+
+* 并项法：利用公式$AB+A\bar{B}=A$
+* 吸收法：利用公式$A+AB=A$
+* 消因子法：利用公式$A+\bar{A}B=A+B$
+* 消项法：利用公式$AB+\bar{A}C+BC=AB+\bar{A}C$
+* 配项法：$\bar{A}+A=1，A\cdot 1=A$
+
+
+
+#### 化简为其他形式
+
+与非与非式：
+
+1. 把F化成最简与或式
+2. 将最简与或式两次求反
+
+与或非式：
+
+1. 求出反函数$\bar{F}的$最简与或式
+2. 对$\bar{F}$求反
+
+或与式：
+
+1. 对最简与或非式进行两次反演律
+
+或非或非式
+
+1. 对最简与或非式的两个与项分别用反演律变为或非式
+
 -------
 
 #### logic gates
