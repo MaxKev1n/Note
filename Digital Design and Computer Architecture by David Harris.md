@@ -96,7 +96,7 @@ nMOS transistors are OFF when the gate is 0 and ON when the gate is 1.pMOS trans
 
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/transmission%20gate.jpg" alt="image-20201115001331300" style="zoom:67%;" />
 
-​	The two sides of the switch are called A and B because a switch is bidirectional and has no preferred input or output side. The control signals are called enables, EN and EN  1, when EN = 0 and another = 1, both transistors are OFF. Hence, the transmission gate is OFF or disabled, so A and B are not connected. When EN = 1 and another = 0, the transmission gate is ON or enabled, and any logic value can flow between A and B.
+​	The two sides of the switch are called A and B because a switch is bidirectional and has no preferred input or output side. The control signals are called enables, $EN$ and $\bar{EN}$  1, when EN = 0 and another = 1, both transistors are OFF. Hence, the transmission gate is OFF or disabled, so A and B are not connected. When EN = 1 and another = 0, the transmission gate is ON or enabled, and any logic value can flow between A and B.
 
 -----
 
@@ -141,7 +141,7 @@ A circuit is combinational if it consists of interconnected circuit elements suc
 
 ​	Multiplexers are among the most commonly used combinational circuits. They choose an output from among several possible inputs based on the value of a select signal. A multiplexer is sometimes affectionately called a mux.
 
-​	Figure 2.54 shows the schematic and truth table for a 2:1 multiplexer with two data inputs, D0 and D1, a select input, S, and one output, Y. The multiplexer chooses between the two data inputs based on the select: if S = 0,  $Y=D_0$, and if S = 1, $Y = D_1$. S is also called a control signal because it controls what the multiplexer does.
+​	Figure 2.54 shows the schematic and truth table for a 2:1 multiplexer with two data inputs, $D_0$ and $D_1$, a select input, S, and one output, Y. The multiplexer chooses between the two data inputs based on the select: if S = 0,  $Y=D_0$, and if S = 1, $Y = D_1$. S is also called a control signal because it controls what the multiplexer does.
 
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/multiplexer.jpg" alt="image-20201213175918402" style="zoom:67%;" />
 
@@ -149,7 +149,7 @@ A circuit is combinational if it consists of interconnected circuit elements suc
 
 #### Decoder
 
-​	A decoder has N inputs and 2N outputs. It asserts exactly one of its outputs depending on the input combination.
+​	A decoder has N inputs and $2^N$ outputs. It asserts exactly one of its outputs depending on the input combination.
 
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/decoder.jpg" alt="image-20201122175036337" style="zoom:67%;" />
 
@@ -185,7 +185,9 @@ A circuit is combinational if it consists of interconnected circuit elements suc
 
 #### D Flip-Flop
 
-​	A D flip-flop can be built from two back-to-back D latches controlled by complementary clocks, as shown in Figure 3.8(a). The first latch, L1, is called the master. The second latch, L2, is called the slave. The node between them is named N1. A symbol for the D flip-flop is given in Figure 3.8(b). When the output is not needed, the symbol is often condensed as in Figure 3.8(c). When CLK  0, the master latch is transparent and the slave is opaque. Therefore, whatever value was at D propagates through to N1. When CLK  1, the master goes opaque and the slave becomes transparent. The value at N1 propagates through to Q, but N1 is cut off from D. Hence, whatever value was at D immediately before the clock rises from 0 to 1 gets copied to Q immediately after the clock rises. At all other times, Q retains its old value, because there is always an opaque latch blocking the path between D and Q
+​	A D flip-flop can be built from two back-to-back D latches controlled by complementary clocks, as shown in Figure 3.8(a). The first latch, L1, is called the master. The second latch, L2, is called the slave. The node between them is named N1. A symbol for the D flip-flop is given in Figure 3.8(b). When the output is not needed, the symbol is often condensed as in Figure 3.8(c). 
+
+​	When CLK = 0, the master latch is transparent and the slave is opaque. Therefore, whatever value was at D propagates through to N1. When CLK = 1, the master goes opaque and the slave becomes transparent. The value at N1 propagates through to Q, but N1 is cut off from D. Hence, whatever value was at D immediately before the clock rises from 0 to 1 gets copied to Q immediately after the clock rises. At all other times, Q retains its old value, because there is always an opaque latch blocking the path between D and Q
 
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/DFlip-flop.jpg" alt="image-20201130180214581" style="zoom: 67%;" />
 
@@ -583,7 +585,7 @@ endmodule
 #### Carry-lookahead adder
 
 ​	The generate and propagate definitions extend to multiple-bit blocks. A block is said to generate a carry if it produces a carry out independent of the carry in to the block. The block is said to propagate a carry if it produces a carry out whenever there is a carry in to the block. We define Gi:j and Pi:j as generate and propagate signals for blocks spanning columns i through j.
-​	A block generates a carry if the most significant column generates a carry, or if the most significant column propagates a carry and the previous column generated a carry, and so forth. For example, the generate logic for a block spanning columns 3 through 0 is $G_3:0 = G_3 + P_3 (G_2 + P_2 (G1 + P1 G0))$
+​	A block generates a carry if the most significant column generates a carry, or if the most significant column propagates a carry and the previous column generated a carry, and so forth. For example, the generate logic for a block spanning columns 3 through 0 is $G_{3:0} = G_3 + P_3 (G_2 + P_2 (G1 + P1 G0))$
 
 ​	A block propagates a carry if all the columns in the block propagate the carry. For example, the propagate logic for a block spanning columns 3 through 0 is $P_{3:0} = P_3 P_2 P_1 P_0$
 
@@ -903,7 +905,7 @@ For a $lw$ instruction, the next step is to read the source register containing 
 
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/increment%20PC%20by%204.jpg" style="zoom:67%;" >
 
-<img src="E:%5CPIC%5Cenhanced%20datapath%20for%20sw%20instruction.jpg" style="zoom:67%;" >
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/enhanced%20datapath%20for%20R-type%20instruction.jpg" style="zoom:67%;" >
 
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/enhanced%20datapath%20for%20R-type%20instruction.jpg" style="zoom:67%;" >
 
@@ -953,7 +955,7 @@ For a $lw$ instruction, the next step is to read the source register containing 
 
 ​	In summary, RAW data hazards occur when an instruction depends on the result of another instruction that has not yet been written into the register file. The data hazards can be resolved by forwarding if the result is computed soon enough; otherwise, they require stalling the pipeline until the result is available. Control hazards occur when the decision of what instruction to fetch has not been made by the time the next instruction must be fetched. Control hazards are solved by predicting which instruction should be fetched and flushing the pipeline if the prediction is later determined to be wrong. Moving the decision as early as possible minimizes the number of instructions that are flushed on a misprediction. You may have observed by now that one of the challenges of designing a pipelined processor is to understand all the possible interactions between instructions and to discover all the hazards that may exist. Figure 7.58 shows the complete pipelined processor handling all of the hazards.
 
-<img src="E:%5CPIC%5Cpipilined%20processor%20with%20full%20hazard%20handling.jpg" style="zoom:67%;" />
+<img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/enhanced%20datapath%20for%20R-type%20instruction.jpg" style="zoom:67%;" />
 
 ------
 
@@ -1311,4 +1313,8 @@ endmodule
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Digital%20Design%20and%20Computer%20Architecture/Support%20hardware%20for%20memory-mapped%20IO.jpg" style="zoom:67%;" >
 
 ------
+
+***Written By ChenZihang 2021.4.21***
+
+---
 
