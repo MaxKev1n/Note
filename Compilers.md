@@ -1,0 +1,706 @@
+# 第一章
+
+SpeedCoding(1953，John Backus)：占用大量的内存
+
+
+
+Fortran(1954-1957)：1958年时约50%的程序使用Fortran编写
+
+1. **Lexical Analysis**: Lexical analysis divides program text into "words" or "tokens"
+2. **Parsing**: diagraming sentences(The diagram is a tree)
+3. **Semantic Analysis**: to catch inconsistencies
+4. **Optimization**: automatically modify programs so that they run faster and use less memory
+5. **Code Generation**: Produces assembly code(usually); A translation into another language
+
+---
+
+**为什么有很多种编程语言？**
+
+> Application domains have distinctive/conflicting needs
+
+科学计算(Fortran)：
+
+1. 优秀的浮点计算
+2. 优秀的阵列计算
+3. 并行性
+
+
+
+商业应用(SQL)：
+
+1. 持续性
+2. 报表生成工具
+3. 并发性
+
+
+
+系统编程(C/C++)：
+
+1. 资源管理
+2. 实时控制
+
+
+
+**为什么会有新的编程语言？**
+
+> Claim: Programmer training is the dominant cost for programming language
+
+1. 广泛使用的语言很难去改变(Widespread language are slow to change)
+2. 开始一种新的语言比较容易(easy to start a new language)
+3. 语言会被用来填补空缺(languages adopted to fill a void)
+
+
+
+**什么是好的编程语言？**
+
+> There is no universally accepted metric for language design
+
+---
+
+# 第二章
+
+Cool: Classroom Object Oriented Language, designed to be implementable in a short time.
+
+* Abstraction
+* Static typing
+* Reuse(inheritance)
+* Memory management
+* And more...
+
+```cool
+class Main {
+	main() : Int {
+		1
+	};
+};
+
+class Main {
+	i : IO <- new IO;
+	main() : IO {
+		i.out_string("hello world!")
+	};
+};
+
+class Main {
+	main() : Object {
+		(new IO).out_string("hello world!")
+	};
+};
+
+class Main {
+	main() : Object {
+		(new IO).out_string((new IO).in_string().concat("\n"))
+	};
+};
+
+class Main inherits A2I {
+	main() : Object {
+		(new IO).out_string(i2a(a2i((new IO).in_string())+1).concat("\n"))
+	};
+};
+
+class Main inherits A2I {
+	main() : Object {
+		(new IO).out_string(i2a(fact(a2i((new IO).in_string()))).concat("\n"))
+	};
+	
+	fact(i : Int) : Int {
+		i+1
+	};
+};
+
+class Main inherits A2I {
+	main() : Object {
+		(new IO).out_string(i2a(fact(a2i((new IO).in_string()))).concat("\n"))
+	};
+	
+	fact(i : Int) : Int {
+		if (i = 0) then 1 else i * fact(i-1) fi
+	};
+};
+
+class Main inherits A2I {
+	main() : Object {
+		(new IO).out_string(i2a(fact(a2i((new IO).in_string()))).concat("\n"))
+	};
+	
+	fact(i : Int) : Int {
+		let fact: Int <- 1 in{
+			while(not(i = 0)) loop
+				{
+					fact <- fact * i;
+					i <- i - 1;
+				}
+			pool;
+			fact;
+		}
+	};
+};
+
+class Main inherits IO {
+	main() : Object {
+		let hello : String <- "Hello ",
+			world : String <- "World!",
+			newline : String <- "\n"
+		in
+			out_string(hello.concat(world.concat(newline)))
+	}
+}
+
+
+class List {
+	item: String;
+	next: List;
+	
+	init(i: String, n: List){
+		{
+			item <- i;
+			next <- n;
+			self;
+		}
+	};
+	
+	fatten(): String {
+		if(isvoid next) then 
+			item
+		else
+			item.conccat(next.flatten())
+		fi
+	};
+};
+class Main inherits IO {
+	main() : Object {
+		let hello : String <- "Hello ",
+			world : String <- "World!",
+			newline : String <- "\n",
+			nil: List,
+			list: List <- (new List).init(hello, (new List).init(world, (new List).init(newline, nil)))
+		in
+			out_string(list.flatten())
+	}
+}
+
+
+class List inherits A2I {
+	item: String;
+	next: List;
+	
+	init(i: String, n: List){
+		{
+			item <- i;
+			next <- n;
+			self;
+		}
+	};
+	
+	fatten(): String {
+		let String: String <- 
+			case item of
+				i: Int => i2a(i);
+				s: String => s;
+				o: Object => {abort();"";};
+			esac
+		in
+			if(isvoid next) then 
+				string
+			else
+				string.conccat(next.flatten())
+			fi
+	};
+};
+class Main inherits IO {
+	main() : Object {
+		let hello : String <- "Hello ",
+			world : String <- "World!",
+			i: Int <- 42,
+			newline : String <- "\n",
+			nil: List,
+			list: List <- (new List).init(hello, (new List).init(i, (new List).init(newline, nil)))
+		in
+			out_string(list.flatten())
+	}
+}
+```
+
+# 第三章
+
+**Token class**:
+
+* Identifier: 由字母或数字组成的字符串，以字母为首字符
+* Integer: 非空的数字字符串
+* Keyword: 关键字
+* Whitespace: 一个由blanks,newlines,tabs组成的非空集合
+
+
+
+* Classify program substrings according to role
+
+* Communicate tolens to the parser
+
+<img src="F:\PIC\Compilers\1.png">
+
+---
+
+example:
+
+```
+if(i==j)
+	z=0;
+else
+	z=1
+	
+\tif(i==j)\n\t\tz=0;\n\telse\n\t\tz=1;
+```
+
+* whitespace: \t	\n\t\t	\n\t	\n\t\t
+* kewords: if	else
+* Identifiers: i	j	z	z
+* numbers: 0	1
+* operator: ==	=	=
+* (	)	;
+
+---
+
+An implementation must do two things
+
+1. Recognize substrings cooresponding to tokens
+2. Identify the tolen class of each lexeme
+
+$$
+<token\quad class,\quad lexeme>\quad is\quad token
+$$
+
+---
+
+LA Examples:
+
+Fortran rule: whitespace是不重要的
+
+```
+DO 5 I = 1,25
+DO 5 I = 1.25
+```
+
+由于whitespace被忽略，因此产生分歧，第一个式子为循环，第二个式子为将1.25赋值给DO5I，但是在逗号与点之前具有相同的字符串序列，直至逗号和点才能得出结果。这就需要**lookhead**。
+
+1. The goal is to partition the string. This is implemented by reading left-to-right, recognizing one token at a time.
+2. "Lookhead" may be required to decide where one token ends and the next token begins.
+
+
+
+PL/I keywords are not reserved
+
+```
+IF ELSE THEN THEN = ELSE;ELSE ELSE = THEN
+```
+
+
+
+* The goal of lexical analysis is to
+  * Partion the input string into lexemes
+  * Identify the token of each lexeme
+* Left-to-right scan => lookahead sometimes required
+
+---
+
+**Regular languages**
+
+*正则表达式(regular expression)*
+
+* Single character
+
+  'c' = {"c"}
+
+* epsilon
+
+  $\epsilon$ = {""}
+
+* Union
+
+  A + B ={a|a$\in$A}$\bigcup${b|b$\in$B}
+
+* Concatenation
+
+  AB = {ab|a$\in$A $\bigwedge$ b$\in$B}
+
+* Iteration
+
+  $A^*$=$\underset{i\geq0}{\bigcup}A^i$
+
+> Def.The regular expressions over $\Sigma$ are the smallest set of expression including
+
+<img src="F:\PIC\Compilers\2.png">
+
+* Regular expressions specify regular languages
+* Five constructs
+  * Two base cases: empty and 1-character strings
+  * Three compound expressions: union, concatenation, iteration
+
+---
+
+**Formal Languages**
+
+> Def.Let $\Sigma$ be a set of characters.A language over $\Sigma$ is a set of strings of characters drawn from $\Sigma$
+
+Meaning function *L* maps syntax to senmantics
+$$
+L:\quad expression\rightarrow Set\quad of\quad Strings
+$$
+<img src="F:\PIC\Compilers\3.png">
+
+**为什么使用meaning function？**
+
+- Makes clear what is syntax, what is semantics.
+- Allows us to consider notation as a separate issue
+- Because expressions and meanings are not one to one correspondings.
+
+ 
+
+> Meaning is many to one(**Never one to many!**)
+
+---
+
+**Lexical Specifications**
+
+关键字："if" or "else" or "then" or ...
+
+'i' 'f' + 'e' 'l' 's' 'e'
+
+"if" + "else"
+
+
+
+整数：一个非空的数字字符串
+
+digit = 'o'+'1'+'2'+'3'+'4'+'5'+'6'+'7'+'8'+'9'
+$$
+digit(digit^*)=digit^+
+$$
+
+
+标识符：以字母开头的字母或者数字串
+
+letter = [a-z A-Z]
+$$
+letter(letter+digit)^*
+$$
+
+
+Whitespace：a non-empty sequence of blanks, newlines, and tabs
+$$
+('\ ' + '\backslash' + '\backslash+')^+
+$$
+
+<img src="F:\PIC\Compilers\5.png">
+
+Example:
+
+*anyone@cs.stanford.edu*
+
+$letter^+$'@'$letter^+$'.'$letter^+$'.'$letter^+$
+
+<img src="F:\PIC\Compilers\4.png">
+
+* Regular expressions describe many useful languages
+* Regular languages are a language specification
+  * We still need an implementation
+
+---
+
+# 第四章
+
+1. Write a rexp for the lexemes of each token class
+   * Number = $digit^+$
+   * Keyword = 'if' + 'else' + ...
+   * Identifier = $letter(letter + digit)^*$
+   * OpenPar = '('
+   * ...
+
+2. Construct *R*, matching all lexemes for all tokens
+
+3. Let input be $x_1...x_n$
+
+   For $1\leq i\leq n$ check $x_1...x_i\in L(R)$
+
+4. If success, then we know that $_1...x_i\in L(R_j)$ for some *j*
+
+5. Remove $X_1...x_i$ from input adn go to (3)
+
+
+
+**How much input is used?**
+
+当面对不同长度的前缀时，通常选择更长的前缀（它被称为*Maximal Munch*）
+
+
+
+**Which token is used?**
+
+按照优先级排序，选择排序在第一个的token
+
+<img src="F:\PIC\Compilers\6.png" style="zoom:50%;" >
+
+
+
+**What if no rules matches?**
+
+编写一个新的正则表达式，对于所有可能出现的错误字符串都将作为无效字符串出现，并且放在优先级的最后面
+
+> *ERROR=[all strings not in the lexical spec]*, put it last in priority.
+
+
+
+* Regular expressions are a concise notation for string patterns
+* use in lexical analyisis requires small extensions
+  * To resolve ambiguities
+    1. matches as long as possible
+    2. highest priority match
+  * to handle errors
+* Good algorithms known
+  * Require only single pass over the input
+  * Few operations per character(table lookup)
+
+---
+
+A finite automation(*有限自动机*) consists of
+
+* An input alphabet $\Sigma$
+* A set of states $S$
+* A start state $n$
+* A set of accepting states $F\subseteq S$
+* A set of transitions $state\rightarrow ^{input}state$
+
+<img src="F:\PIC\Compilers\7.png" style="zoom: 50%;" >
+
+<img src="F:\PIC\Compilers\8.png" style="zoom: 50%;" >
+
+> Language of a FA = set of accepted strings
+
+* Another kind of transition: $\epsilon-moves$ 机器可以在不消耗任何输入的情况下进行状态转换
+
+
+
+* Deterministic Finite Automate(DFA)
+  * One transition per input per state
+  * No $\epsilon-moves$
+
+* Bibdeterministic Finite Automate(NFA)
+  * Can have multiple transitions for one input in a given state
+  * Can have $\epsilon-moves$
+
+> A DFA takes only one path through the state graph
+>
+> An NFA accepts if some choices lead to an accepting state
+
+
+
+* NFAs and DFAs recognize the same set of languages
+  * regualr languges
+* DFAs are faster to execute
+  * There are no choices to consider
+
+* NFAs are, in general, smaller
+
+---
+
+<img src="F:\PIC\Compilers\9.png" style="zoom: 50%;" >
+
+<img src="F:\PIC\Compilers\10.png" style="zoom: 50%;" >
+
+<img src="F:\PIC\Compilers\11.png" style="zoom: 50%;" >
+
+<img src="F:\PIC\Compilers\12.png" style="zoom: 50%;" >
+
+---
+
+**NFA to DFA**
+
+<img src="F:\PIC\Compilers\13.png" >
+$$
+\epsilon-closure(B)=\{B,C,D\}\\\epsilon-closure(G)=\{A,B,C,D,G,H,I\}
+$$
+
+
+**一共有多少种不同的状态？**
+
+若有N个状态，则存在$2^N-1$个非空子集(finite set of possible configurations)
+
+
+
+NFA
+
+* states $S$
+* start state $s\in S$
+* final state $F\in S$
+* 转移函数：$a(x)=\{y|x\in X_n\quad x\stackrel{a}{\longrightarrow}1\}$
+* $\epsilon-closure()$
+
+DFA
+
+* states: subsets of $S$(except the empty set)
+* start state: $\epsilon-closure(s)$
+* final state: $\{x|x\cap F\neq\varphi\}$
+* $X\stackrel{a}{\longrightarrow}Y$ if $Y=\epsilon-closure(a(X))$
+
+<img src="F:\PIC\Compilers\14.png" >
+
+---
+
+**Implementing FA**
+
+* A DFA can be implemented by a 2D table T
+  * One dimension is *states*
+  * Other dimension is *input symbol*
+  * For every transition $S_i\rightarrow ^{a}S_k$ define $T[i,a]=k$
+
+<img src="F:\PIC\Compilers\15.png" >
+
+缺点：表中有很多重复的行
+
+---
+
+这个表将包含一个指向特定状态的vector of moves的指针
+
+<img src="F:\PIC\Compilers\16.png" >
+
+缺点：these pointers actually take time to your reference
+
+---
+
+<img src="F:\PIC\Compilers\17.png" >
+
+节省了大量的表格空间，但是运行速度会比DFA慢得多
+
+---
+
+* NFA $\rightarrow$ DFA conversion is key
+* Tools trade between speed and space
+
+| DFAs | faster, less compact |
+| :--: | :------------------: |
+| NFAs |   slower, concise    |
+
+---
+
+# 第五章
+
+> 由于正则表达式无法表示所有的语言，我们需要Parser
+
+
+
+* *Input*: sequence of tokens from lexer
+* *Output*: parse tree of the program
+
+<img src="F:\PIC\Compilers\18.png" style="zoom:50%;"  >
+
+| Phase | Input                | Output                      |
+| :---: | -------------------- | --------------------------- |
+| Lexer | String of characters | String of tokens            |
+| Parse | String of tokens     | Parse tree(may be implicit) |
+
+---
+
+**Context-Free Grammars**
+
+* A CFG consists of
+  * A set of terminals *T*
+  * A set of non-terminals *N*
+  * A start symbol *s* ($s\in N$)
+  * A set of productions $X\rightarrow Y_1..Y_n$, $x\in N$ , $Y_i\in N\cup T\cup\{\epsilon\}$
+
+
+
+1. Begin with a string with only the start sysmbol *S*
+2. Replace any non-terminal *X* in the string by the right-hand side of some production $X\rightarrow Y_1...Y_n$
+3. Repeat (2) until there are no non-terminals
+
+
+$$
+S\rightarrow...\rightarrow\alpha_0\rightarrow\alpha_1\rightarrow\alpha_2\rightarrow...\rightarrow\alpha_n\\\alpha_0\stackrel{*}{\longrightarrow}\alpha_n\quad(in\geq0\ steps)
+$$
+<img src="F:\PIC\Compilers\19.png" >
+
+The idea of a CFG is a big step. But:
+
+* Membership in a lanugage is "yes" or "no"; alse need parse tree of the input
+* Must handle errors gracefully
+* Need an implementations of CFG's (e.h., bison)
+
+---
+
+**Derivations**
+
+A derivcation can be drawn as a tree
+
+* Start symbol is the tree's root
+* For a production $X\rightarrow Y_1...Y_n$ add children $Y_1...Y_n$ to node $X$
+
+<img src="F:\PIC\Compilers\20.png" >
+
+ 
+
+* 一个解析树有
+  * 叶子节点为终结符
+  * 内部节点为非终结符
+* An in-order traversal of the leaves is the original input
+* 解析树展示了操作符之间的关联，但是输入字符串并不会
+
+
+
+* 上图的案例为最左推导(*left-most derivation*)：对于每一步，替换最左侧的非终结符
+* There is an quivalent notion of a right-most derivation
+
+<img src="F:\PIC\Compilers\21.png" >
+
+> 最右推导和最左推导有相同的解析树
+
+---
+
+> 如果对于一个字符串有多个解析树，那么这个语法就是*ambiguous*
+
+<img src="F:\PIC\Compilers\22.png" >
+
+* Instead of rewriting the grammar
+  * Use the more natural(ambiguous) grammar
+  * Along with disambiguating declarations
+* Most tools allow precedence and associativity declarations to disambiguate grammars
+
+<img src="F:\PIC\Compilers\23.png" >
+
+---
+
+# 第六章
+
+许多种类的可能错误
+
+| Error kind  |        Example        | Detected by... |
+| :---------: | :-------------------: | :------------: |
+|   Lexical   |        ...$...        |     Lexer      |
+|   Syntax    |       ...x*%...       |     Parser     |
+|  Semantic   | ...int x;y = x(3);... |  Type checker  |
+| Correctness | your favorite program |  Tester/User   |
+
+* 错误处理应该
+  * 准确并且清晰地报错错误
+  * 快速地从错误中恢复
+  * 不会减慢有效代码的编译
+
+
+
+* Panic mode
+  * When an error is dected:
+    * Discard tokens until one with a clear role is found
+    * Continue from there
+  * Looking for *synchronizing* tokens
+    * typically the statementt or expression terminators
+* Error productions
+* Automatic local or global correction
+
+
+
+<img src="F:\PIC\Compilers\24.png" >
+
+<img src="F:\PIC\Compilers\25.png"   >
+
+<img src="F:\PIC\Compilers\26.png"   >
+
