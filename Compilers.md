@@ -704,3 +704,77 @@ A derivcation can be drawn as a tree
 
 <img src="F:\PIC\Compilers\26.png"   >
 
+---
+
+**Abstract Syntax Trees**
+
+---
+
+**Recursive Descent**
+
+* Define boolean functions that check for a match of:
+  * A given token terminal:`bool term(TOKEN tok){return *next++ == tok;}`
+  * The nth production of S:`bool Sn(){...}`
+  * Try all productions of S:`bool S(){...}`
+
+
+
+* For production $E\rightarrow T$
+
+  * `bool E1() {return T();}`
+
+* Fo production $E\rightarrow T+E$
+
+  * `bool E2() {return T() && term(PLUS) && E();}`
+
+* For all productions of E(with backtracking)
+
+  * ```
+    bool E() {
+    
+    	Token *save = next;
+    
+    	return (next = save, E1()) || (next = save, E2());
+    
+    }
+    ```
+
+<img src="F:\PIC\Compilers\27.png" style="zoom:50%;"    >
+
+---
+
+**Left Recursion**
+
+对于产生式$S\rightarrow Sa$
+
+* `bool S1() {return S() && term(a);}`
+* `bool S() {return S1();}`
+
+`S()`将会进入无限循环
+
+* A left-recursive grammar has a non-terminal S $S\rightarrow ^{+}S\alpha$ for some $\alpha$
+
+
+
+对于left-recursive grammar$S\rightarrow S\alpha | \beta$，$S$生成的所有字符串以$\beta$为首，并且跟随任意数量的$\alpha$
+
+* 可以使用right-recursion重写
+  * $S\rightarrow\beta S'$
+  * $S'\rightarrow\alpha S'|\epsilon$
+
+
+
+* In general	$S\rightarrow S\alpha_1|...|S\alpha_n|\beta_1|...|\beta_m$
+* Rewrite as
+  * $S\rightarrow\beta_1S'|...|\beta_mS'$
+  * $S'\rightarrow\alpha_1S'|...|\alpha_nS'|\epsilon$
+
+
+
+* Recursive descent
+  * Simple and general parsing stratrgy
+  * Left-recursion must be eliminatied first
+  * ... but that can be done automatically
+
+---
+
