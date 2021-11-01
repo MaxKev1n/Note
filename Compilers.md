@@ -870,3 +870,109 @@ $$
 
 <img src="F:\PIC\Compilers\32.png" style="zoom:67%;"      >
 
+---
+
+**LL(1) Parsing Tables**
+
+For each production $A\rightarrow\alpha$ in CFG *G* do:
+
+* for each terminal $t\in First(\alpha)$ do $T[A,t]=\alpha$
+* if $\epsilon\in First(\alpha)$, for each $t\in Follow(A)$ do $T[A,t]=\alpha$
+* if $\epsilon\in First(\alpha)$ and $\$\in Follow(A)$ do $T[A,\$]=\alpha$
+
+<img src="F:\PIC\Compilers\33.png" style="zoom:67%;"      >
+
+<img src="F:\PIC\Compilers\34.png" style="zoom:67%;"      >
+
+* If any entry is multiply defined then G is not LL(1)
+
+---
+
+**Bottom-Up Parsing**
+
+Bottom-up parsing reduces a string to the start symbol by inverting productions
+
+<img src="F:\PIC\Compilers\35.png" style="zoom:67%;"      >
+
+> A bottom-up parser traces a rightmost derivation in reverse
+
+<img src="F:\PIC\Compilers\36.png" style="zoom:67%;"      >
+
+---
+
+**Shift-Reduce Parsing**
+
+* Shift(移进): Move *|* one place to the right, Shift a terminal to the left string
+  * $ABC|xyz\Longrightarrow ABCx|yz$
+
+* Reduce(归约): Apply an inverse production at the right end of the left string
+  * If $A\rightarrow xy$ is a production, then $Cbxy|ijk\Longrightarrow CbA|ijk$
+
+
+
+* Left string can be implemented by a stack: Top of the stack is the *|*
+* Shift pushes a terminal on the stack
+* Reduce
+  * pops symbols off of the stack(production rhs)
+  * pushed a non-terminal on the stack(production lhs)
+
+
+
+* 如果移进或者归约都合法，将会存在*shift-reduce conflict*(移进-归约冲突)
+* 如果可以使用两个不同的产生式进行归约，将会存在*reduce-reduce conflict*(归约-归约冲突)
+
+---
+
+# 第八章
+
+**Handles**
+
+Intuition: Want to reduce only if the result can still be reduced to the start symbol
+
+* Assume a rightmost derivation: $S\rightarrow^{*}\alpha X\omega\rightarrow\alpha\beta\omega$
+  * Then $\alpha\beta$ is a handle of $\alpha\beta\omega$
+
+> A handle is a reduction that also allows further reductions back to the start symbol
+
+> In shift-reduce parsing, handles appear only at the top of the stack, never inside
+
+---
+
+**Recognizing Handles**
+
+$\alpha$ is a viable prefix if there is an $\omega$ such that $\alpha|\omega$ is a state of a shift-reduce parser
+
+PS:$\alpha$ is stack and $\omega$ is rest of input;
+
+> For any grammar, the set of viable prefixes is a regular language
+
+
+
+* An item is a production with a "." somewhere on the rhs
+* Items are often called "LR(0) items"
+
+
+
+Example:
+
+$E\rightarrow T+E|T$
+
+$T\rightarrow int*T|int|(E)$
+
+* Then $(E|)$ is a state of a shift-reduce parse
+* $(E$ is a prefix of the rhs of $T\rightarrow(E)$, will be reduced after the next shift
+* Item $T\rightarrow(E.)$ says that so far we have seen $(E$ of this production and hope to see $)$
+
+
+
+<img src="F:\PIC\Compilers\37.png" style="zoom:67%;"        >
+
+<img src="F:\PIC\Compilers\38.png" style="zoom:50%;"        >
+
+To recognize viable prefixes, we must
+
+* Recognize a sequence of partial rhs's of productions, where
+* Each partial rhs can eventually reduce to part of the missing suffix of its prdecessor
+
+---
+
