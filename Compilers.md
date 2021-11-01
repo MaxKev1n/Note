@@ -778,3 +778,95 @@ A derivcation can be drawn as a tree
 
 ---
 
+# 第七章
+
+**Predictive Parsers**
+
+* Parser能够预测使用哪一条产生式
+  * By looking at the next few tokens
+  * No backtracking
+* Predictive parsers accept LL(k) grammars(*left-to-right left-most derivation(k tokens lookahead)*)
+
+
+
+$E\rightarrow T+E|T$
+
+$T\rightarrow int|int*T|(E)$
+
+改写为
+
+$E\rightarrow TX$
+$X\rightarrow+E|\epsilon$
+
+$T\rightarrow intT|(E)$
+
+$Y\rightarrow*T|\epsilon$
+
+<img src="F:\PIC\Compilers\28.png" style="zoom:50%;"    >
+
+* 方法类似于recursive descent，除了
+  * For the leftmost non-terminal *S*
+  * We look a the next input token *a*
+  * And choose the production shown at *[S,a]*
+
+* A stack records fromtier of parse tree
+  * Non-terminals that have yet to be expanded
+  * Terminals that have yet to matched against the input
+  * Top of stack = leftmost pending terminal or non-terminal
+
+<img src="F:\PIC\Compilers\29.png" style="zoom:67%;"      >
+
+<img src="F:\PIC\Compilers\30.png" style="zoom:67%;"      >
+
+---
+
+**First Sets**
+
+* Consider non-termianl *A*, production$A\rightarrow\alpha$, token *t*
+* $T[A,t]=\alpha$ in two cases:
+  * if $\alpha\rightarrow^{*}t\beta$
+    * $\alpha$ can derive a *t* in the first position, We say that $t\in First(\alpha)$
+  * if$A\rightarrow\alpha$ and $\alpha\rightarrow^{*}\epsilon$ and $S\rightarrow^{*}\beta At\delta$
+    * we say $t\in Follow(A)$
+
+
+
+*Definition*
+$$
+First(X)=\{t|X\rightarrow^{*}t\alpha\}\cup\{\epsilon|X\rightarrow^{*}\epsilon\}
+$$
+*Algotithm sketch*
+
+1. $First(t)=\{t\}$
+2. $\epsilon\in First(X)$
+   * if $X\rightarrow\epsilon$
+   * if $X\rightarrow A_1...A_n$ and $\epsilon\in First(A_i)$ for $1\leq i\leq n$
+3. $First(\alpha)\subseteq First(X)$ if $X\rightarrow A_1...A_n\alpha$
+   * and $\epsilon\in First(A_i)$ for $1\leq i\leq n$
+
+<img src="F:\PIC\Compilers\31.png" style="zoom:67%;"      >
+
+---
+
+**Follow Sets**
+
+*Definition*
+$$
+Follow(X)=\{t|S\rightarrow^{*}\beta Xt\delta\}
+$$
+*Intuition*
+
+* if $X\rightarrow AB$ then $First(B)\subseteq Follow(A)$ and $Follow(X)\subseteq Follow(B)$
+  * if $B\rightarrow^{*}\epsilon$ then $Follow(X)\subseteq Follow(A)$
+* If *S* is the start symbol then $\$\in Follow(S)$
+
+*Algorithm sketch*
+
+1. $\$\in Follow(S)$
+2. $Firset(\beta)-\{\epsilon\}\subseteq Follow(X)$
+   * For each porduction $A\rightarrow\alpha X\beta$
+3. $Follow(A)\subseteq Follow(X)$
+   * For each production $A\rightarrow\alpha X\beta$ where $\epsilon\in First(\beta)$
+
+<img src="F:\PIC\Compilers\32.png" style="zoom:67%;"      >
+
