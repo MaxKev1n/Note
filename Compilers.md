@@ -976,3 +976,99 @@ To recognize viable prefixes, we must
 
 ---
 
+**Recognizing Viable Prefix**
+
+1. Add a dummy production $S'\rightarrow S$ to *G*
+2. The NFA states are the items of *G*
+3. For item $E\rightarrow\alpha.X\beta$ add transition, $E\rightarrow\alpha.X\beta\rightarrow\alpha X.\beta$
+4. For item $E\rightarrow\alpha. X\beta$ and production $X\rightarrow\gamma$ add $E\rightarrow\alpha .X\beta\rightarrow.\gamma$
+5. Every state is an accepting state
+6. Start state is $S'\rightarrow S$
+
+<img src="F:\PIC\Compilers\39.png"         >
+
+---
+
+**Valid Items**
+
+<img src="F:\PIC\Compilers\40.png"         >
+
+---
+
+**SLR Parsing**
+
+* LR(0) Parsing: Assume
+  * stack contains $\alpha$
+  * next input is *t*
+  * DFA on input $\alpha$ terminates in state *s*
+* Reduce by $X\rightarrow\beta$ if *s* contains item $X\rightarrow\beta$
+* Shift if
+  * *s* contains item $X\rightarrow\beta .t\omega$
+  * equivalent to saying *s* has a transition labeled *t*
+
+
+
+*Assume*
+
+* stack contains $\alpha$
+* next input is *t*
+* DFA on input $\alpha$ terminates in state *s*
+
+
+
+* Reduce by $X\rightarrow\beta$ if
+  * *s* contains item $X\rightarrow\beta$
+  * $t\in Follow(X)$
+* Shift if
+  * *s* contains item $X\rightarrow\beta.t\omega$
+
+    
+
+<img src="F:\PIC\Compilers\41.png"         >
+
+* If there is a conflict in the last step, grammar is not SLR(k), k is the amount of lookahead.
+
+---
+
+<img src="F:\PIC\Compilers\42.png"         >
+
+---
+
+**SLLR improvement**
+
+* Define *goto[i,A]=j* jf $state_i\rightarrow^{A}state_j$
+* *goto* is just the transition function of the DFA
+
+
+
+* Shift *x*
+  * Push *<a,x>* on the stack
+  * *a* is current input
+  * *x* is a DFA state
+* Reduce $X\rightarrow\alpha$
+  * As before
+* Accept
+* Error
+
+<img src="F:\PIC\Compilers\43.png"         >
+
+<img src="F:\PIC\Compilers\44.png" style="zoom: 67%;"          >
+
+* LR(1) is more powerful
+  * Build lookahead into the items
+  * An LR(1) item is a pair: LR(0) item x lookahead
+  * $[T\rightarrow .int*T,\$]$ means
+    * After seeing $T\rightarrow int*T$ reduce if lookahead is $\$$
+  * More accurate than just using follow sets
+  * Take a look at the LR(1) automaton for your parser
+
+---
+
+**SLR Examples**
+
+<img src="F:\PIC\Compilers\45.png"           >
+
+**因此，该语法不是SLR(1)**
+
+---
+

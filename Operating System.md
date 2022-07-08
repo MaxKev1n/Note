@@ -705,10 +705,31 @@ $$
 
 <img src="https://cdn.jsdelivr.net/gh/MaxKev1n/Pictures//Operating%20Systems/SJF%20Again%20and%20Round%20Robin.jpg" style="zoom:67%;" >
 
-
 $$
 T_{response} = T_{firstrun}-T_{arrival}
 $$
 
 ------
+
+#### 结合IO
+
+<img src="E:\pic\7.8.png" style="zoom: 67%;" />
+
+---
+
+### Scheduling: The Multi-Level  Feedback Queue
+
+#### MLFQ：多级反馈队列
+
+* 规则1：如果A的优先级$>$B的优先级，运行A
+* 规则2：如果A的优先级$=$B的优先级，轮转运行A和B
+* 规则3：工作进入系统时，放在最高优先级
+* 规则4：一旦工作用完了其在某一层的时间配额，就降低其优先级
+* 规则5：经过一段时间*S*，就将系统中所有工作重新加入最高优先级队列
+
+<img src="E:\pic\8.4.png" style="zoom: 67%;" />
+
+<img src="E:\pic\8.5.png" style="zoom: 67%;" />
+
+<img src="E:\pic\8.6.png" style="zoom: 67%;" />
 
